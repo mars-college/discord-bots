@@ -1,0 +1,4 @@
+openai
+sentence_transformers
+discord.py
+easydict
