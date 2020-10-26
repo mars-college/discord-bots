@@ -1,7 +1,9 @@
 import asyncio
 import os
 import re
+import json
 import time
+import requests
 from easydict import EasyDict
 import random
 import itertools
@@ -9,32 +11,21 @@ import numpy as np
 from dotenv import load_dotenv
 
 import discord
-import openai
 
 from bots import *
 from prompt import *
+from gpt3 import *
 
 
 botlist = ['FACTS', 'DEEPLEARNING', 'PHILOSOPHY', 'KITCHEN', 'BEYONCE', 'TURING']
 
+botlist = ['FACTS', 'PHILOSOPHY', 'KITCHEN', 'CHATSUBO', 'QA']
 
-
-def run_gpt3(prompt, max_tokens, temperature, stops, engine='curie'):
-    print("go gpt: ", max_tokens, temperature, stops, engine)
-    response = openai.Completion.create(
-        engine=engine, 
-        prompt=prompt, 
-        max_tokens=max_tokens, 
-        temperature=temperature,
-        stop=stops)
-    text = response.choices[0].text
-    return text.strip()
 
 
 
 class DiscordBot(discord.Client):
     
-
     async def setup(self, token, prompt_settings):
         self.ready = False
         self.timestamps = []
@@ -50,20 +41,19 @@ class DiscordBot(discord.Client):
         if not self.ready:
             return
 
-        all_mentions = re.findall('<@![0-9]+>', message.content)
-        mentioned = '<@!%d>' % self.user.id in all_mentions
+        all_mentions = re.findall('<@!?[0-9]+>', message.content)
+        mentioned = '<@!%d>' % self.user.id in all_mentions or '<@%d>' % self.user.id in all_mentions
         self_author = message.author == self.user
-        channel_eligible = (message.channel.id in self.settings.channels) if self.settings.channels != None else True        
+        channel_eligible = True  #(message.channel.id in self.settings.channels) if self.settings.channels != None else True
         strategy = self.settings.strategy.on_mention if mentioned else self.settings.strategy.regular
         gpt_params = self.settings.gpt_params
         
         busy = len(self.timestamps) > 0
-        author_is_self = message.author.name == self.user.name        
+        author_is_self = message.author.name == self.user.name   
         decide_to_reply = random.random() < strategy.probability
-        if self.user.name == 'gpt3-philosophy':
-            print(strategy.probability, "thats the prob", self.user.name, decide_to_reply, author_is_self, busy)
-        
-        if not busy and not author_is_self and channel_eligible and decide_to_reply:
+        debug = self.settings.debug if 'debug' in self.settings else False
+
+        if not author_is_self and channel_eligible and decide_to_reply:  # and not busy?
             timestamp = {"time": time.time(), "delay": 1+1*random.random()}
             self.timestamps.append(timestamp)
 
@@ -77,35 +67,46 @@ class DiscordBot(discord.Client):
             messages_new = [{'sender': str(msg.author.id), 'message': msg.content.strip()} 
                             for msg in message_history[::-1]]
 
-            prompt_str, stops = self.prompt.get_prompt(messages_new)
-            print("\n\n---------------\n\n%s\n\n-------------\n\n" % prompt_str)
-
-            # convert mentions to names
+            prompt_str, stops, search_results = self.prompt.get_prompt(messages_new)
             
+            if prompt_str is None:
+                return
+
             await asyncio.sleep(timestamp['delay'])
             
-            completion = run_gpt3(
-                prompt_str, 
-                max_tokens=gpt_params.max_tokens, 
-                temperature=gpt_params.temperature, 
-                stops=stops, 
-                engine='davinci')
+            if debug:
+                print('\n\n===== DEBUG PROMPT (%s) ========\n\n' % self.user.name)
+                print('%s' % prompt_str)
+                print("\n\n================================\n\n")
             
-            # convert names to mentions
-            
-            await message.channel.send(completion.strip())
+            else:
+                
+                completion = gpt3_complete(
+                    prompt_str, 
+                    stops=stops, 
+                    max_tokens=gpt_params.max_tokens, 
+                    temperature=gpt_params.temperature, 
+                    engine='davinci',
+                    max_completions=gpt_params.max_completions if 'max_completions' in gpt_params else 1)
+                
+                completion = self.prompt.postprocess_gpt(completion)
+                log(prompt_str, completion, search_results)
+                await message.channel.send(completion.strip())
 
             self.timestamps.remove(timestamp)
 
         else:
-            print("SKIP!")
+            print('%s skip: %s %s %s' % (
+                self.user.name, 
+                'debug' if debug else 'ACTIVE', 
+                'busy' if busy else 'FREE',
+                'wrongchannel' if channel_eligible else 'CHANNEL'))
             
 
     
 def main(): 
     load_dotenv()
     guild = os.getenv('DISCORD_GUILD')
-    openai.api_key = os.getenv('OPENAI_API_KEY')
     
     loop = asyncio.get_event_loop()
     for botname in botlist:
