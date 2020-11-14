@@ -90,7 +90,7 @@ class DiscordBot(discord.Client):
                     max_completions=gpt_params.max_completions if 'max_completions' in gpt_params else 1)
                 
                 completion = self.prompt.postprocess_gpt(completion)
-                log(prompt_str, completion, search_results)
+                log(prompt_str, completion, self.user.name, search_results)
                 await message.channel.send(completion.strip())
 
             self.timestamps.remove(timestamp)

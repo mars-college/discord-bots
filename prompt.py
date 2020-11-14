@@ -58,6 +58,13 @@ class Prompt:
         for char, user in self.char2user.items():
             msg = msg.replace(char, '<@!%s>'%user)
             msg = msg.replace(char, '<@%s>'%user)
+        force_mention = self.prompt.force_mention if 'force_mention' in self.prompt else False       
+        if force_mention and str(force_mention) not in msg:
+            print('msg was:')
+            print(msg)
+            msg = '<@!{}> {}'.format(str(force_mention), msg)
+            print('msg is now:')
+            print(msg)
         return msg
 
     def get_prompt(self, messages_new):
@@ -71,9 +78,11 @@ class Prompt:
         
         if erase_mentions:
             for m in messages_new:
+                m.message = m.message.replace('<@!%s>,'%str(self.id), '').strip()
+                m.message = m.message.replace('<@%s>,'%str(self.id), '').strip()
                 m.message = m.message.replace('<@!%s>'%str(self.id), '').strip()
                 m.message = m.message.replace('<@%s>'%str(self.id), '').strip()
-        
+
         if self.messages_candidates:
             candidates = [mc[0]['message'] for mc in self.messages_candidates]
             responses = [mc[1]['message'] for mc in self.messages_candidates]
@@ -154,6 +163,8 @@ class Prompt:
             if message or not message.isspace():
                 prompt_str += '\n'*line_breaks_pre
                 prompt_str += '%s:'%sender
+                if line_breaks_post==0:
+                    prompt_str += ' '
                 prompt_str += '\n'*line_breaks_post
                 prompt_str += '%s'%message.strip()
         
@@ -167,6 +178,8 @@ class Prompt:
             if message or not message.isspace():
                 prompt_str += '\n'*line_breaks_pre
                 prompt_str += '%s:'%sender
+                if line_breaks_post==0:
+                    prompt_str += ' '
                 prompt_str += '\n'*line_breaks_post
                 prompt_str += '%s'%message.strip()
 
@@ -176,9 +189,11 @@ class Prompt:
         prompt_str += '\n'*line_breaks_pre
         prompt_str += '%s:' % self.name
         
-        print("PROMPT:\n", prompt_str)
         stops = ['\n%s:'%c for c in list(set(characters))[:3]]
         stops += ['\n'] if self.prompt.formatting.stop_at_line_break else []
-        
+
+        print("PROMPT:\n", prompt_str)
+        print("STOPS:\n", stops)
+
         return prompt_str, stops, search_results
             

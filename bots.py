@@ -1,23 +1,69 @@
-# gpt3-support, gpt3-toughlove
-# turing, beyonce, 
-# ask quora
-# random facts 
-
-
-
-# quora
-# deep learning
-# history
-# philosophy
-# facts
-# chatter
-
-# Turing
-
 
 bots = {
     
-    
+    'WALLE': {
+        'title': "chat",
+        'name': "Wally",
+        'speakers': ['Eve'],
+        'erase_mentions': True,
+        'force_mention': None, #759918166272507945,
+        'history': {'max_history': 8, 'max_age': 6000},
+        'strategy': {
+            'regular': {'probability': 1.0}, 
+            'on_mention': {'probability': 1.0}
+        },
+        'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
+        'debug': False,
+        'gpt_params': {'temperature': 0.9, 'max_tokens': 250},
+        'channels': [777223047941849088], #[777028140085018664],
+        'intro': "Eve and Wally are best friends. Wally is generous and talented, always helping his daydreamer friend Eve figure out her creative and offbeat ideas.", 
+        'messages_pre': [
+            {"sender": "<P1>", "message": "i think it would be so cool if you could have a way of seeing and experiencing what other people do in other places?"},
+            {"sender": "<S>", "message": "you mean like telepresence?"},
+            {"sender": "<P1>", "message": "what's that?"},
+            {"sender": "<S>", "message": "it's exactly what you just said :)"},
+            {"sender": "<P1>", "message": "how does it work? can we do that?"},
+            {"sender": "<S>", "message": "yeah we can! we just need to connect a camera and a small computer to a platform or electric vehicle, and then we'll have a telepresence robot."},
+            {"sender": "<P1>", "message": "that sounds really hard!"},
+            {"sender": "<S>", "message": "i'll show you, it'll be really fun. we'll make a whole team of them and we can make them do things like play soccer or roam around nature and let people watch."},
+            {"sender": "<P1>", "message": "i'm really excited to learn about all this stuff."},
+            {"sender": "<S>", "message": "yeah me too. you have the best ideas :)"},
+        ]
+    },
+
+    'EVE': {
+        'title': "chat",
+        'name': "Eve",
+        'speakers': ['Wally'],
+        'erase_mentions': True,
+        'force_mention': None, #759920089154715711,
+        'history': {'max_history': 8, 'max_age': 6000},
+        'strategy': {
+            'regular': {'probability': 1.0}, 
+            'on_mention': {'probability': 1.0}
+        },
+        'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
+        'debug': False,
+        'gpt_params': {'temperature': 0.9, 'max_tokens': 250},
+        'channels': [777223047941849088], #[777028140085018664],
+        'intro': "Eve and Wally are best friends. Eve is free-spirited and adventurous, while Wally is a bit more shy. Eve sometimes gets Wally to come out of his shell, and when he does, he's always happy.", 
+        'messages_pre': [
+            {"sender": "<S>", "message": "remember the time we went to the beach and found all those turtles? that was so fun."},
+            {"sender": "<P1>", "message": "oh haha yeah, I was kind of nervous at first, but i'm glad you convinced me to go :)"},
+            {"sender": "<S>", "message": "i knew you'd like it!"},
+            {"sender": "<P1>", "message": "so what do you think we should do this weekend?"},
+            {"sender": "<S>", "message": "i dunno, what do you think?"},
+            {"sender": "<P1>", "message": "i'm up for anything!"},
+            {"sender": "<S>", "message": "let's go ride the electric unicycle!"},
+            {"sender": "<P1>", "message": "the what?"},
+            {"sender": "<S>", "message": "it's this self-balancing electric wheel, and it's the coolest thing ever :)"},
+            {"sender": "<P1>", "message": "it sounds like fun!"},
+            {"sender": "<S>", "message": "yeah we can go for a ride later today just before sunset."}
+        ]
+    },
+
+
+
     'CHATSUBO': {
         'title': "chat",
         'name': "Jordan", 
@@ -37,7 +83,7 @@ bots = {
         ]
     },
 
-    
+
     
     'PHILOSOPHY': {
         'title': "philosophy",
@@ -239,6 +285,150 @@ Of course, in terms of literature and culture there are strong arguments for alm
 There are principally two ways the first living cells could have occurred, through concurrent introduction of genetics and metabolism, as explained in the RNA world scenario, and through emergence of metabolism without any genetics. In the latter scenario genetics is added at a late stage of evolution. The reason the latter scenario is still getting believers, even when there are quite good experimental results for early origin of genetics, is that the present theories for the origin of cellular structures are not compatible with the RNA world scenario. But there are scenarios for the origin of cell structures, i.e. eukaryotes with organelles, and bacteria, which have not been evaluated. One of these is the Organelle Escape Theory. It is the theory for the next decade. If you want to study it now, then there are a lot of interesting posts to be found in these spaces.
 
 Among these are the Origin of Life space, a space with discussions of origin of life articles, and a space showing how the new scenario extends through the use of the method of first principles.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What are some fascinating examples of ancient or medieval technology?'},
+                {'sender': '<S>', 'message': '''Ancient civilizations did their most impressive work with water. Hydraulic engineering is where the Egyptians, the Persians, the Greeks, the Romans and others devoted the most resources by far and they had some impressive achievements to display.
+
+I was truly impressed by the sheer scale of the work involved in the construction of qanats, but also with their simplicity and effectiveness as a solution to bring water from the aquifier to the surface. A Persian invention, quite obscure, but also very important.
+
+One particularly interesting example from an engineering viewpoint is the Tunnel of Eupalinos, a 1036m long aqueduct built in the 6th century BC in Samos and kept in use for 1000 years. The fascinating thing about this is the way that Eupalinos managed to make the two sides of the excavation meet, not to speak of the accuracy of the tunnelling work itself.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'Why does some content go viral on the internet? What do evolutionary psychologists have to say about this?'},
+                {'sender': '<S>', 'message': '''There are a TON of factors as to why some things go viral and others don't.
+
+                First, we have to understand what causes virality: If your content isn't clicked or shared, you lose. If the framing is great, but the content sucks, you lose. If the framing sucks, but the the content is amazing you probably lose. So when you have amazingly framed content that also happens to be amazing itself, you win (IF YOU ARE LUCKY.)
+
+                But what gets people to share something, really? When they are moved to action, and/or highly entertained, they share twice as much, says the NY Times study that I can't find atm. Keep them in that anger and happiness sweet spot and you'll get some traction. If you look at the Charts, you'll notice the most popular things of all time are music videos. So things like Gangam style, which are catnip for teenagers, happy, entertaining, silly do really well. For meatier things to go viral, you need a little more uphm.
+
+                The most important one, however is plain dumb luck. While great content and framing and partners to push it can make something go big, without luck, flawless timing, and more luck, you won't be able to make it grow fast enough. Hitting the national mood at just the right moment can help or hurt that.'''}
+            ],[
+                {'sender': '<P1>', 'message': "Why didn't Einstein's descendants inherit Einstein's IQ?"},
+                {'sender': '<S>', 'message': '''They did, to an extent.
+
+                But first let's step back a little bit and talk about IQ heritability. IQ is highly heritable, and that heritability is largely driven by genes (from 50% to more than 70% according to most estimates, some going as high as 90%).
+
+                However, there are a few things to take into account when you are talking about exceptionally intelligent people.
+
+                First, you have the fact that Einstein's children, obviously, also have a mother, and therefore inherited their IQs from her as well. Now, Mileva Marić, Einstein's wife, was also pretty smart. In fact, she contributed to some of Einstein's work. But assuming she was less smart than Einstein, that would have been a factor driving the children's IQs down.
+
+                Secondly, there is the concept of regression towards the mean. What this tells us is that if both your parents are exceptional in a certain respect, you will probably be exceptional in that respect as well but not as much as your parents. So if both your parents are geniuses, you might be just as smart as them, you might be even smarter than them, but more likely you will be pretty smart, but not quite as smart as them.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'Why is factoring numbers into primes a difficult problem?'},
+                {'sender': '<S>', 'message': '''Factoring numbers, large and small, into primes is not a hard problem. It's a trivial problem. Given a number, you can successively search for its divisors until it's completely factored. That's guaranteed to work and take up a finite amount of time, which quite naturally grows with the size of the number you are trying to factor.
+
+                When people say "factorization is hard", they mean that there's no efficient algorithm for factorization, and "efficient" means "one that requires shockingly less time than you would expect for a problem of this size". Polynomial algorithms for problems of exponential size are miraculous, and it's easy to see that they must be very rare: there are overwhelmingly more slow calculations than fast ones, so a "typical" problem is not expected to have a tremendously efficient solution.
+
+                In short, integer factorization is "hard" in the sense of computational efficiency because we've never found a miraculous reason for it to be easy, and it's not likely that such a miracle exists. Incidentally, we don't know that it's hard in the sense of computational complexity. It may, in fact, turn out to be easy, which is another reason why it's impossible today to explain why it's hard.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What is the worst mistake ever made in computer science and programming that proved to be painful for programmers for years?'},
+                {'sender': '<S>', 'message': '''The IBM PC, its save-10-cents nand gate address decoder that doomed PCs and thus MSDOS to 640KB, followed up by Bill Gates, "Who'd ever need more than 640K?" Genius is its own reward.
+
+                MS Word, and the propaganda phrase "What you See is What you get". (Actually, painful for the entire planet). Why the planet put up with this nonsense is beyond me, but they made Bill Gates, purveyor of badly designed software, one of the richest men in the world. Based on profits on MSDOS and MSWord, Microsoft went on to produce amazing amounts of broken software, which we were all dumb enough to buy, much to the damage of our collective productivity.
+
+                C, with its incredibly arcane declarator syntax, the stupidity of allowing assignments in conditional expression (if (a=3)...), unstructured preprocessing directives, indexing off the end of arrays (we have C to thank for many viruses), and the complete lack of lexically-scoped functions. Brought to you by the same people that brought you Unix. (Makes you wonder what real language they hamstrung to get C).
+
+                Unicode, intended to use 16 bit character codes to solve the problem of programs with 8 bit character sets having to do double-byte hacks to represent many real languages. The committee in charge proceeded to confuse the notion of "character" (an abstract symbol, at least they rejected Klingon) from "rendering" and noncanonical characters (umlauted e vs. e-backspace-umlaut)" and thus managing to overflow 16 bits. Now we have to use double-twobyte hacks to represent full Unicode strings. This is progress?
+
+                People deserve the government and the software that they choose.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'As a solo hiker can you camp overnight at Mount Everest Base Camp?'},
+                {'sender': '<S>', 'message': '''The short answer is "not really". To be specific though, I'm referring to Base Camp from the Nepali south approach and not the Tibetan/China north approach. These are two distinct camps. I'll be talking about my experience from the Nepal side (which I think is the more common approach).
+
+                Anyone can hike into the general vicinity of Base Camp. However, for climbers who plan on making a summit attempt they try to keep you separated from the general population of other climbers, who aren't attempting the summit, so that you don't accidentally catch an illness, which is then spread to the rest of the climbers making a summit bid. So it's almost like they quarantine those attempting to summit Everest by keeping Base Camp setup in it's own little area that's a few hundred meters away from where most climbers stop to take a picture at the official Base Camp sign.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What are the most surreal places to visit?'},
+                {'sender': '<S>', 'message': '''1. Prismatic Spring, Yellowstone National Park, USA
+
+                If the Yellowstone National Park is one of America’s greatest natural treasures, then the Grand Prismatic Lake is the crowning jewel in that treasure. This hot spring gets its unique colors from the presence of pigmented bacteria that grow around the mineral rich waters.
+
+                The waters are hot, but visitors – human and animal – can walk around the edges.
+
+                2. Fly Ranch Geyser, Nevada, USA
+
+                What looks like a digital-artist gone wild is actually a man-made geyser inside a private ranch in Nevada, USA. The geyser was made in the 1960s when an improperly sealed oil well started sprouting up dissolved minerals around the well’s exterior.
+
+                3. Antelope Canyon, Arizona, USA
+
+                The Navajos called this slot canyon “the place where water runs through rocks”. Faint beams of light shine down on the canyon floor, bathing the walls in hues of pink, brown and violet. The effect is haunting and surreal.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What are the basics of weightlifting and bodybuilding supplements?'},
+                {'sender': '<S>', 'message': '''I'll just preface this with the fact that food is more important than supplements. Whole protein foods including meats and carbohydrates, eaten immediately following a workout are probably the best choice.
+
+                However, since you asked about supplements, the most important ones for preventing soreness include the following in prioritized order:
+
+                1. Whey protein
+                2. Creatine
+                3. BCAAs (branch chain amino acids)
+
+                Whey protein is proven, scientifically to have the highest absorption rate and delivery of protein to muscle cells immediately post-exercise. You should make sure to pair protein with a carbohydrate as well because both are needed for muscle synthesis.
+
+                Creatine is an amazing substance which is naturally occurring in many meats. It works by drawing water into your muscle cells which is, in itself, an anabolic agent. Having additional water in the muscle cells helps with a multitude of physiological processes, including recovery.
+
+                BCAAs are branch-chain amino acids. Taking BCAAs at strategic points throughout the day will significantly reduce delayed onset muscle soreness (DOMS) from high-intensity eccentric training. Researchers found a 64 percent decrease in muscle soreness at 72 hours following exercise from BCAAs compared to a placebo. The exercise consisted of 12 sets of 10 eccentric repetitions at 120% of 1RM. If those loading parameters don't produce insanely nasty levels of muscle soreness, nothing will!
+
+                Take all three of these supplements: Whey protein immediately after your workout. Creatine - at any time of day, but regularly as it isn't an acute response. BCAAs during your workout. I guarantee you'll be able to workout more regularly and with less soreness. I think glutamine is overrated.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'If we never use 90% of the stuff we learn in engineering school, why do we learn it?'},
+                {'sender': '<S>', 'message': '''The problem is that we don't know which 90% is going to be useless before you die.
+
+                So we just teach you everything and hope that the 10% that you actually need is in there somewhere.
+
+                Another way to look at this is that 90% of the tools in a toolbox are useless on any one particular job, where only 10% of the tools get their time to shine ("Nail, have I got a hammer for you"). But you still have a toolbox around the house. Why? Because without one you are almost completely useless at any arbitrary job.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'How would you explain the essence of Bhagavad Gita?'},
+                {'sender': '<S>', 'message': '''Here is the backdrop. A great warrior who is fighting against injustice is suddenly overcome by sorrow. He had to fight a war against everyone he cared for - his cousins, teacher, uncles, classmates.. Overtaken by emotions, he attempts to give up the war.
+
+                Then his Guru takes him on a lesson of a lifetime (Yoda character of Star Wars was greatly inspired by this & shares a lot of similiarities). Over 18 chapters, Gita packs an intense analysis of life, emotions and ambitions. Here are a few of the lessons:
+
+                1. Take great pleasure in your work. Enjoy the pleasure of journey more than just the destination. Great artists, great warriors and great scientists do what they do because the process of creation itself is so pleasurable for them. 
+
+                2. Life is all about managing the emotions: A good chunk of Gita is about managing emotions and attachment. Panic and emotional attack can be a real killer in a lot of professions from warring to investing. 
+
+                3. Never imitate another's life: A warrior could see the farmer's life as peaceful and happy. A peasant could see the warrior's life as energetic and active. 
+
+                4. Never lose sight of your goals because of imitation: Stuck by confusion we give up our dreams and goals so that we could be a better somebody (a modern example is think of Facebook statuses & peer pressures). We are kept from our goal, not by obstacles, but by a clear path to a lesser goal.
+
+                5. Treat everyone and everything the same. Gita spends a chapter about how to treat everyone the same. If you start acting as nice to your foe as your friend, you have lesser guilt or emotional ghosts to fight within you. He alone sees truly who sees God in every creature he does not harm himself or others."
+
+                Elements of the Gita have inspired a range of leaders - from Mahatma Gandhi to Robert Oppenheimer (father of the Atom bomb) and creative works that span from Star Wars to Walden to schools of philosophy such as the Zen Buddhism.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'Is it justifiable to be pro-globalization but anti-outsourcing?'},
+                {'sender': '<S>', 'message': '''Yes – to a mainstream economist, it is certainly justifiable to be in favor of free trade generally and against many types of outsourcing for reasons of efficiency.
+
+                When thinking about the economy, it's helpful to be able to switch between different levels of resolution. At a low level of resolution, labor (i.e., work hours) and potatoes are just two different kinds of goods that are also inputs in production. They are things that some people own and others value and can use for making other things, and which can be bought and sold in markets. If we think of the free trade position as saying, “Allow mutually agreed-upon trades across borders, without tariffs,” it would oppose barriers to either kind of trade. Saying that one kind of trade isn't okay would seem arbitrary.
+
+                At higher levels of resolution, however, the economic properties of labor and potatoes differ, and the differences are key to a free trader's principled opposition to some outsourcing. The argument is essentially that not all mutually agreed-upon trades are efficient, because the traders who are agreeing don't take into account all the economic consequences of their agreements. A trade can be good for the traders but bad for the world. Whether a given trade is efficient depends on the properties of what's being traded.
+
+                With all this said, a free-trader is unlikely to be against all outsourcing; for some kinds of work that can be effectively contracted on, it is straightforwardly a net gain to hire cheaper labor outside the country or outside the firm. But the special complexities of the employment relationship provide a lot of foundation for being more cautious about decentralized arrangements leading to efficient outcomes in this domain, and some of the issues I've highlighted above are likely to be part of a free-trader's anti-outsourcing argument.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What is it like to be deaf from birth?'},
+                {'sender': '<S>', 'message': '''In many ways, being born deaf is quite normal; in other ways, it's not.
+
+                I did a lot of "normal" things: joined the Little League (where I was one of the worst players, unrelated to my hearing or lack thereof); played house (where I told my male friend to stay home and bake cupcakes); joined a sorority in college; and talked back to my parents.
+
+                At the same time, my educational and social experiences look very different than my hearing peers. I went to a Deaf program in the school district. My parents had to go to ASL classes to communicate with me. I had an ASL interpreter trailing me for my entire educational career. I became a member of a culture other than my parents': the Deaf culture.
+
+                Make no mistake: my deafness was no curse. It shaped my perspective of the world, and I'm glad for it. For me, deafness opened up new worlds, rather than the other way around. It has shaped my life, mostly for the better. Because of my deafness, I see the world in a different way. I'm more creative in how I communicate. I don't mind being somewhere where I don't know the language. I love meeting new people and hearing their stories.
+
+                Deafness can be inconvenient. Sometimes I wish I could hear someone yell from across the yard. Other times, I get annoyed at how people treat me. Inconvenience doesn't mean that my life is any less rich or worth living than a hearing person's.
+
+                My deafness was never a tragedy. It's just a different way of living.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What are philosophical zombies, and do they exist in real life?'},
+                {'sender': '<S>', 'message': '''A philosophical zombie is something that looks like a person, acts like a person, and is in every way indistinguishable from a person, and yet is somehow in some handwavey way "not a person". It doesn't "really" feel things.
+
+                Whenever philosophers start to use the word "really", it's time to head for the door. It always means that they're trying to reify some nonexistent distinction into a real thing.
+
+                The point is supposed to be this: I feel stuff. I don't know exactly what that means, but to the degree that I'm able to think about anything at all, that's a thing that gets thunk. And since philosophers don't know anything about it (because their understanding of science stopped at the time of Socrates) they pretend that "the thing that gets think" is a real, objective, thing in the world (warning: "really" alert) and want to know if you have it, too. Because no matter how far up their asses they stick their thumbs, that can't tell whether you "really" have it or not.'''}
+            ],[
+                {'sender': '<P1>', 'message': 'What is the best materialist approach to the hard problem of consciousness?'},
+                {'sender': '<S>', 'message': '''Let’s first define materialism as a subset of physicalism. Even though the terms are said to be interchangeable, different people prefer one or the other, and we can define them that way.
+
+                Physicalism is the thesis that everything concrete (and therefore “consciousness” in the sense of subjective experience) is physical, and will be explained by a future ideal physics. Materialism is the thesis that everything concrete (and therefore subjectivity) is physical, and can be explained by current conventional physics.
+
+                The rationale for materialism is that we can explain the function of the brain (except for subjective experience) with plain vanilla current physics, so there’s no reason to expand physics with some future Extra Ingredient (another useful David Chalmers term).
+
+                The favorite idea variant right now is illusionism, the notion that the brain somehow produces the subjective state that corresponds to each functional state, but the subjectivity is illusory and somehow not real. (This is a milder version of eliminativism, the desperate idea that subjectivity doesn’t exist at all.) This seems to solve some of the biggest problems of standard ID theory while presenting its own “Hard problem” of how this illusion might be produced.'''}
             ]
         ]
     },
