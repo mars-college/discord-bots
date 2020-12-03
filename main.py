@@ -44,7 +44,7 @@ class DiscordBot(discord.Client):
         all_mentions = re.findall('<@!?[0-9]+>', message.content)
         mentioned = '<@!%d>' % self.user.id in all_mentions or '<@%d>' % self.user.id in all_mentions
         self_author = message.author == self.user
-        channel_eligible = True  #(message.channel.id in self.settings.channels) if self.settings.channels != None else True
+        channel_eligible = (message.channel.id in self.settings.channels) if self.settings.channels != None else True
         strategy = self.settings.strategy.on_mention if mentioned else self.settings.strategy.regular
         gpt_params = self.settings.gpt_params
         

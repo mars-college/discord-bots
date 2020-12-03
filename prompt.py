@@ -34,7 +34,7 @@ class Prompt:
         self.name = prompt.name
         self.prompt = prompt
         
-        self.messages_pre = prompt.messages_pre if 'messages_pre' in prompt else None
+        self.messages_pre = prompt.messages_pre if 'messages_pre' in prompt and prompt.messages_pre is not None else []
         self.messages_candidates = prompt.messages_candidates if 'messages_candidates' in prompt else None
         
         #self.calculate_features()

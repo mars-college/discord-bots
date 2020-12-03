@@ -1,5 +1,48 @@
 
+
 bots = {
+    
+    
+    
+
+    'MECHANICALDUCK': {
+        'title': "chat",
+        'name': "Roger", 
+        'history': {'max_history': 1, 'max_age': 6000},
+        'strategy': {
+            'background': {'expected_freq': 10},
+            'regular': None,
+            'on_mention': {'probability': 1.0}
+        },
+        'channels': [758719600895590444, 758719600895590441, 741757454894891071, 759864082383110154, 761619228482076703, 748633305230082269, 758834882599976970, 761627656558084107, 761709792405880833, 761709792405880833, 764623050993434655, 761629924166598667],
+
+        'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
+        'debug': False,
+        'gpt_params': {'temperature': 0.8, 'max_tokens': 50},
+        'intro': "Roger is a duck who is able to talk with humans, but only by quacking. He can respond questioningly, politely, lovingly, or angrily with exclamations, emojis, and other kinds of embellishments.",
+        'messages_pre': [
+            {"sender": "<P1>", "message": "Roger, how are you today?"},
+            {"sender": "<S>", "message": "quack quack quack "},
+            {"sender": "<P1>", "message": "really? I spoke with Emily and she said I could take her unicycle today."}, 
+            {"sender": "<S>", "message": "quack... quack quack quaaack quack ヽ༼ຈل͜ຈ༽⊃─☆*:・ﾟ"}, 
+            {"sender": "<P1>", "message": "but you're the one who crashed it in the first place Roger."}, 
+            {"sender": "<S>", "message": "QUAACK!! Quack quack Quaack! quack quack QUAAAAACCCK!!!"}, 
+            {"sender": "<P1>", "message": "okay, okay you can have it today. just hope you came with your moves prepared."}, 
+            {"sender": "<S>", "message": "quack..."}, 
+            {"sender": "<P1>", "message": "Roger, what do you think of my hairstyle?"}, 
+            {"sender": "<S>", "message": "quaAAAck quack quack Quack quack QUACK quack quack quaaaccckkk"} 
+        ],
+        'background': {
+            'gpt3_prompt': '''The following is a poem about the desert.
+            
+            '''        
+        }
+    },
+
+    
+
+    
+    
     
     'WALLE': {
         'title': "chat",
@@ -75,7 +118,7 @@ bots = {
         'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
         'debug': False,
         'gpt_params': {'temperature': 0.9, 'max_tokens': 250},
-        'channels': [741757454894891071, 759864082383110154, 761619228482076703, 755076426516136056, 748633305230082269, 758834882599976970, 761627656558084107, 761709792405880833, 761709792405880833, 764623050993434655, 761629924166598667],
+        'channels': [741757454894891071, 759864082383110154, 761619228482076703, 748633305230082269, 758834882599976970, 761627656558084107, 761709792405880833, 761709792405880833, 764623050993434655, 761629924166598667],
         'intro': "", 
         'messages_pre': [
             {"sender": "<P1>", "message": "we're going to be starting the screening in a few minutes."},
@@ -93,7 +136,7 @@ bots = {
         'strategy': {'regular': {'probability': 0.04}, 'on_mention': {'probability': 1.0}},
         'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
         'gpt_params': {'temperature': 0.9, 'max_tokens': 125},
-        'channels': [758834882599976970,          758719600895590444],
+        'channels': [741757454894891071, 758834882599976970,          758719600895590444],
         'intro': "The following is a chat that <P1> and <P2> are having with a professor of philosophy in a chatroom. They are all kind, creative, civil, funny, and knowledgeable.",   
         'messages_pre': [
             {"sender": "<P1>", "message": "<P2>, the hard problem of consciousness is about the nature of mind."},
@@ -167,7 +210,7 @@ bots = {
         'strategy': {'regular': {'probability': 0.0}, 'on_mention': {'probability': 1.0}},
         'formatting': {'line_breaks_before_sender': 1, 'line_breaks_after_sender': 0, 'stop_at_line_break': True},
         'gpt_params': {'temperature': 0.87, 'max_tokens': 250},
-        'channels': [764623050993434655,    758719600895590444],
+        'channels': [764623050993434655,    758719600895590444, 758834882599976970],
         'intro': "<P1> is asking questions to a world expert on health and fitness, who is also an excellent cook.",
         'messages_pre': [
             {"sender": "<P1>", "message": "What's a good recipe for asparagus?"},
@@ -190,7 +233,7 @@ bots = {
         'history': {'max_history': 1, 'max_age': None},
         'strategy': {'regular': {'probability': 0.0}, 'on_mention': {'probability': 1.0}},
         'gpt_params': {'temperature': 0.9, 'max_tokens': 350, 'max_completions': 2},
-        'channels': [758719600895590444],
+        'channels': [758719600895590444, 758834882599976970],
         'formatting': {'line_breaks_before_sender': 3, 'line_breaks_after_sender': 2, 'stop_at_line_break': False},
         'intro': "",
         'messages_candidates': [
@@ -508,3 +551,150 @@ One particularly interesting example from an engineering viewpoint is the Tunnel
     
 
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+#####################################
+#######################################
+
+
+
+
+
+
+bots = {
+    
+    
+    'chatsubo': {
+        'token_env': 'DISCORD_TOKEN_WALLE',
+        'debug': False,
+        'programs': {
+            'gpt3': {
+                'name': 'Jordan',
+                'chat_history': {
+                    'max_history': 25, 
+                    'max_age': 60*60*2
+                },
+                'intro': "<S> is a duck who is able to talk with humans, but only by quacking. He can respond questioningly, politely, lovingly, or angrily with exclamations, emojis, and other kinds of embellishments.",
+                'messages_pre': [
+                    {"sender": "<P1>", "message": "we're going to be starting the screening in a few minutes."},
+                    {"sender": "<S>", "message": "sounds awesome! i'll head over soon :)"}
+                ],
+                'formatting': {
+                    'line_breaks_before_sender': 1, 
+                    'line_breaks_after_sender': 0, 
+                    'stop_at_line_break': True
+                },
+                'erase_mentions': False,
+                'force_mention': None,
+                'engine': 'davinci',
+                'temperature': 0.9, 
+                'max_tokens': 250,
+            }
+        },    
+        'behaviors': {
+            'background': {
+                
+            },
+            'on_message': {                
+                'probability': 0.5,
+                'channels': [758719600895590444, 741757454894891071, 759864082383110154, 761619228482076703, 748633305230082269, 758834882599976970, 761627656558084107, 761709792405880833, 761709792405880833, 764623050993434655, 761629924166598667],
+                'program': 'gpt3'                
+            },
+            'on_mention': {
+                'probability': 1.0,
+                'channels': [758719600895590444, 741757454894891071, 759864082383110154, 761619228482076703, 748633305230082269, 758834882599976970, 761627656558084107, 761709792405880833, 761709792405880833, 764623050993434655, 761629924166598667],
+                'program': 'gpt3'
+            }
+        }
+    },
+
+    
+    
+    
+    
+    
+    
+    
+    'wally': {
+        'token_env': 'DISCORD_TOKEN_WALLE',
+        'debug': False,
+        'programs': {
+            'gpt3': {
+                'name': 'Roger',
+                'chat_history': {
+                    'max_history': 10, 
+                    'max_age': 60*60*2
+                },
+                'intro': "<S> is a duck who is able to talk with humans, but only by quacking. He can respond questioningly, politely, lovingly, or angrily with exclamations, emojis, and other kinds of embellishments.",
+                'messages_pre': [
+                    {"sender": "<P1>", "message": "<S>, how are you today?"},
+                    {"sender": "<S>", "message": "quack quack quack "},
+                    {"sender": "<P1>", "message": "really? I spoke with <P2> and she said I could take her unicycle today."}, 
+                    {"sender": "<S>", "message": "quack... quack quack quaaack quack ヽ༼ຈل͜ຈ༽⊃─☆*:・ﾟ"}, 
+                    {"sender": "<P2>", "message": "you crashed my unicycle last week, <S>."}, 
+                    {"sender": "<S>", "message": "QUAACK!! Quack quack Quaack! quack quack QUAAAAACCCK!!!"}, 
+                    {"sender": "<P2>", "message": "okay, okay you can have it today. just hope you came with your moves prepared."}, 
+                    {"sender": "<S>", "message": "quack..."}, 
+                    {"sender": "<P3>", "message": "<S>, what do you think of my hairstyle?"}, 
+                    {"sender": "<S>", "message": "quaAAAck quack quack Quack quack QUACK quack quack quaaaccckkk"} 
+                ],
+                'formatting': {
+                    'line_breaks_before_sender': 1, 
+                    'line_breaks_after_sender': 0, 
+                    'stop_at_line_break': True
+                },
+                'erase_mentions': True,
+                'force_mention': None,
+                'engine': 'davinci',
+                'temperature': 0.8, 
+                'max_tokens': 50,
+            },
+            'ml4a': {
+                'model': 'neural_style'
+            }
+        },    
+        'behaviors': {
+            'background': {
+                
+            },
+            'on_message': {                
+                'probability': 0.7,
+                'channels': [758719600895590444, 758719600895590441, 741757454894891071],
+                'delay': [0, 1],
+                'program': 'gpt3'                
+                'options': [
+                    {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
+                    {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3'}
+                ]
+                
+            },
+            'on_mention': {
+                'probability': 0.9,
+                'channels': [758719600895590444, 758719600895590441, 741757454894891071],
+                'delay': [0, 1],
+                'program': 'gpt3'                
+                'options': [
+                    {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
+                    {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3'}
+                ]
+            }
+        }
+    },
+    'another_one': {
+        
+    }
+}
