@@ -2,3 +2,5 @@ openai
 sentence_transformers
 discord.py
 easydict
+suntime
+git+https://github.com/ml4a/ml4a-guides.git@ml4a.net#egg=ml4a
