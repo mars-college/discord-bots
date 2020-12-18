@@ -1,7 +1,7 @@
 
 # discord channels
-gene_general = 758719600895590444
-gene_lounge = 777028140085018664
+testnet_general = 758719600895590444
+testnet_lounge = 777028140085018664
 mc_general = 741757454894891071
 mc_shelter = 761619228482076703
 mc_intros = 759864082383110154
@@ -19,7 +19,7 @@ mc_workshops = 766677400401608734
 
 mc_study = [mc_ai, mc_eeg, mc_biopunk, mc_flowarts, mc_music, mc_food, mc_workshops]
 
-all_channels_gene = [gene_general, gene_lounge]
+all_channels_gene = [testnet_general, testnet_lounge]
 all_channels_mc = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
 
 
@@ -59,12 +59,12 @@ bots = {
                 'type': 'daily', 
                 'time': (22, 7),
                 'program': 'gpt3_prompt',
-                'channel': gene_general
+                'channel': testnet_general
             },{
                 'type': 'sunset',
-                'minutes_before': 60,
+                'minutes_before': 1006,
                 'program': 'gpt3_prompt',
-                'channel': gene_general
+                'channel': testnet_general
             }]
         }
     },
@@ -129,7 +129,7 @@ bots = {
                 },
                 'erase_mentions': True,
                 'force_mention': None,
-                'engine': 'davinci',
+                'engine': 'curie',
                 'temperature': 0.92, 
                 'max_tokens': 80,
             },
@@ -208,12 +208,14 @@ bots = {
             'on_message': {                
                 'probability': 0.055,
                 'channels': all_channels_gene + all_channels_mc,
-                'program': 'gpt3_chat'                
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.75
             },
             'on_mention': {
                 'probability': 1.0,
                 'channels': all_channels_gene + all_channels_mc,
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.9
             }
         }
     },

@@ -9,10 +9,10 @@ def run(settings):
     config = {
         'content_image': image.tubingen(),
         'style_image': image.starrynight(),
-        'size': 720,
-        'num_iterations': 500
+        'size': 640,
+        'num_iterations': 100
     }
 
     img = neural_style.run(config)
-    image.save(img, 'myimage.png')
-    return 'myimage.png'
+    image.save(img, 'ml4aimage.png')
+    return 'ml4aimage.png'

@@ -11,6 +11,9 @@ import numpy as np
 from transformers.tokenization_gpt2 import GPT2Tokenizer
 import openai
 
+from dotenv import load_dotenv
+load_dotenv()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 default_characters = ['Alyssa', 'Brady', 'Chloe', 'Derrick', 
                       'Eleanor', 'Fletcher', 'Greta', 'Harold', 

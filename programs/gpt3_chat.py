@@ -14,13 +14,13 @@ def get_utc_time():
     return now
 
 
-async def run(gpt3_settings, 
+async def run(settings, 
               message, 
               member2var, 
               var2member):
     
-    max_history = gpt3_settings.chat_history.max_history
-    max_age = gpt3_settings.chat_history.max_age
+    max_history = settings.chat_history.max_history
+    max_age = settings.chat_history.max_age
 
     # get channel's message history and limit it according to chat_history settings
     message_history = await message.channel.history(limit=max_history).flatten()
@@ -37,7 +37,7 @@ async def run(gpt3_settings,
 
     # run GPT-3, given prompt settings and truncated history
     prompt, stops, completion, char2var, var2char, search_results = gpt3.run(
-        gpt3_settings, 
+        settings, 
         messages_new)
 
     # convert all name variables back to member ids
@@ -45,9 +45,9 @@ async def run(gpt3_settings,
                         lambda m: var2member[m.group(1)], 
                         completion).strip()
 
-    #force_mention = gpt3_settings.force_mention if 'force_mention' in gpt3_settings else None       
+    #force_mention = settings.force_mention if 'force_mention' in settings else None       
     gpt3.log(prompt, stops, completion, 
              member2var, var2member, char2var, var2char, 
-             search_results, gpt3_settings.name)
+             search_results, settings.name)
     
     return completion

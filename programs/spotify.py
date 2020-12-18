@@ -19,7 +19,14 @@ def run(message, self_id):
         message_out = ''
         if action is None:
             message_out += 'I don\'t understand!\n\n'
-        message_out += 'Queue a song:\n\t<@{}> queue Michael Jackson Thriller\n\nPlay a song immediately:\n\t<@{}> play Queen Bohemian Rhapsody\n\nPlay next song in queue:\n\t<@{}> next\n\nPause/stop playback:\n\t<@{}> stop\n\n'.format(*[self_id for i in range(4)])
+        message_out += 'Queue a song:\n'
+        message_out += '\t<@{}> queue Michael Jackson Thriller\n\n'
+        message_out += 'Play a song immediately:\n'
+        message_out += '\t<@{}> play Queen Bohemian Rhapsody\n\n'
+        message_out += 'Play next song in queue:\n'
+        message_out += '\t<@{}> next\n\n'
+        message_out += 'Pause/stop playback:\n'
+        message_out += '\t<@{}> stop\n\n'.format(*[self_id for i in range(4)])
 
     else:
         
@@ -28,8 +35,7 @@ def run(message, self_id):
                 client_id=os.getenv('SPOTIFY_CLIENT_ID'),
                 client_secret=os.getenv('SPOTIFY_CLIENT_SECRET'),
                 redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI'),
-                scope="streaming")
-        )
+                scope="streaming"))
         
         if action == 'next':
             spotify.next_track(device_id=os.getenv('SPOTIFY_DEVICE_ID'))

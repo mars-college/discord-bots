@@ -48,6 +48,8 @@ class DiscordBot(discord.Client):
         self.settings = EasyDict(settings)
         self.timestamps = []
         self.last_senders = {}
+        self.member2var = None
+        self.var2member = None
         token = os.getenv(self.settings.token_env) 
         await self.start(token)
         
@@ -88,7 +90,90 @@ class DiscordBot(discord.Client):
         for v in range(num_vars+1, 25):
             var2member['<P{}>'.format(v)] = var2member['<P{}>'.format(1+(v-1)%num_vars)]
         
-        return member2var, var2member
+        self.member2var = member2var
+        self.var2member = var2member
+
+                
+    async def run_program(self, program, message, channel=None):
+        if channel is None:
+            channel = message.channel
+
+        response, embed, file = '', None, None
+
+        ##########################################
+        ## GPT-3 chat
+        ##########################################
+        
+        if program == 'gpt3_chat':
+            response = await gpt3_chat.run(
+                self.settings.programs.gpt3_chat, 
+                message, 
+                self.member2var, 
+                self.var2member)
+            
+        ##########################################
+        ## GPT-3 single prompt
+        ##########################################
+
+        elif program == 'gpt3_prompt':
+            s = self.settings.programs.gpt3_prompt
+            response = gpt3.complete(
+                s.prompt, 
+                stops=s.stops if 'stops' in s else None, 
+                max_tokens=s.max_tokens if 'max_tokens' in s else 50, 
+                temperature=s.temperature if 'temperature' in s else 0.9, 
+                engine=s.engine if 'engine' in s else 'davinci',
+                max_completions=3)
+            
+        ##########################################
+        ## ml4a
+        ##########################################
+
+        elif program == 'ml4a':            
+            await message.channel.send('<@!{}> Drawing something, give me a few minutes...'.format(message.author.id))
+            local_filename = ml4a_client.run(self.settings.programs.ml4a)
+            file = discord.File(local_filename, filename=local_filename)
+            response = '<@!{}>'.format(message.author.id)
+         
+        ##########################################
+        ## Spotify                    
+        ##########################################
+
+        elif program == 'spotify':
+            response, image_url = spotify.run(message, self.user.id)
+            if image_url:
+                embed = discord.Embed()
+                embed.set_image(url=image_url)
+        
+        # truncate to Discord max character limit
+        response = response[:2000]
+        
+        # send to discord
+        await channel.send(response, embed=embed, file=file)
+
+    
+    async def add_reaction(self, message):
+        last_message = re.sub('<@!?[0-9]+>', '', message.content)
+
+        reaction_prompt = \
+            "This bot reacts to sentences with a single emoji.\n\n"\
+            "Sentence: I'm so happy about everything today! The world is wonderful.\n"\
+            "Emoji: 😊\n"\
+            "Sentence: I really wish the world were a better place. I'm sad.\n"\
+            "Emoji: 😞\n"\
+            "Sentence: That was the funniest joke ever, haha.\n"\
+            "Emoji: 😂\n"\
+            "Sentence: "+last_message.strip()+"\n"\
+            "Emoji:"
+
+        # kind of expensive for what it is...
+        emoji = gpt3.complete(reaction_prompt,
+            stops=['\n'],
+            max_tokens=3,
+            temperature=0.5,
+            engine='davinci')
+
+        await message.add_reaction(emoji.strip())
 
     
     async def on_message(self, message):
@@ -96,7 +181,7 @@ class DiscordBot(discord.Client):
             return
         
         # lookup & replace tables from member id's to variables e.g. <P1>, <S>
-        member2var, var2member = await self.update_member_lookup(message)
+        await self.update_member_lookup(message)
 
         # mentions and metadata
         all_mentions = re.findall('<@!?([0-9]+)>', message.content)
@@ -109,6 +194,13 @@ class DiscordBot(discord.Client):
             context = behavior.on_mention if 'on_mention' in behavior else None
         else:
             context = behavior.on_message if 'on_message' in behavior else None
+
+        # maybe add a reaction to the message
+        if context is not None \
+        and not author_is_self \
+        and 'reaction_probability' in context \
+        and (random.random() < context.reaction_probability):
+            await self.add_reaction(message)
 
         # skipping conditions
         channel_eligible = (message.channel.id in context.channels) if context and context.channels else True
@@ -134,12 +226,11 @@ class DiscordBot(discord.Client):
             ranked_queries = list(reversed(np.argsort(scores)))
             options_search = [{'candidate': candidates[idx], 'score': scores[idx]} 
                               for idx in ranked_queries]
-            for result in options_search:
+            for result in options_search[:2]:
                 print(" -> %s : %0.2f" % (result['candidate'], result['score']))
             idx_top = ranked_queries[0]
-            print("idx top",  idx_top)
             program = context.options[idx_top]['program']
-            print("the program is", program)
+            print("selected program:", program)
         
         else:
             program = context.program if 'program' in context else None
@@ -147,76 +238,16 @@ class DiscordBot(discord.Client):
                 print('No program selected')
                 return
         
-        # optional delay
+        # delay, run program, remove active timestamp
         await asyncio.sleep(timestamp['delay'])
-        
-        
-        ##########################################
-        ## Program: GPT-3 chat
-        ##########################################
-        
-        if program == 'gpt3_chat':
-            settings = self.settings.programs.gpt3_chat
-            completion = await gpt3_chat.run(
-                settings, 
-                message, 
-                member2var, 
-                var2member) 
-            await message.channel.send(completion[:2000])
-            
-            
-        ##########################################
-        ## Program: GPT-3 single prompt
-        ##########################################
-
-        elif program == 'gpt3_prompt':
-            settings = self.settings.programs.gpt3_prompt
-            completion = gpt3.complete(
-                settings.prompt, 
-                stops=settings.stops if 'stops' in settings else None, 
-                max_tokens=settings.max_tokens if 'max_tokens' in settings else 50, 
-                temperature=settings.temperature if 'temperature' in settings else 0.9, 
-                engine=settings.engine if 'engine' in settings else 'davinci',
-                max_completions=3)            
-            await message.channel.send(completion[:2000])
-
-            
-        ##########################################
-        ## Program: ml4a generate
-        ##########################################
-
-        elif program == 'ml4a':
-            settings = self.settings.programs.ml4a
-            filename = ml4a_client.run(settings)
-            message_str = 'hello world'
-            await message.channel.send(message_str, 
-                file=discord.File(filename, filename=filename))
-         
-                
-        ##########################################
-        ## Program: Spotify                    
-        ##########################################
-
-        elif program == 'spotify':
-            message_out, embed_out = spotify.run(message, self.user.id)
-            if embed_out:
-                embed = discord.Embed()
-                embed.set_image(url=embed_out)
-                await message.channel.send(message_out, embed=embed)         
-            else:                   
-                await message.channel.send(message_out)
-                    
-        # when done, remove the timestamp, freeing up bot
+        await self.run_program(program, message)
         self.timestamps.remove(timestamp)
 
 
     async def timed_event(self, event):
         channel = self.get_channel(event.channel)
-        
-        if event.program == 'gpt3_prompt':
-            pass
-        
-        await channel.send('hello world')
+        message = None
+        await self.run_program(event.program, message, channel)
         
         
     async def schedule_timed_events(self):
@@ -247,7 +278,7 @@ class DiscordBot(discord.Client):
 
             await asyncio.sleep(time_until.seconds)
             await self.timed_event(next_event['event'])
-            await asyncio.sleep(60)
+            await asyncio.sleep(90)
             
       
     async def background_process(self):
@@ -267,7 +298,6 @@ class DiscordBot(discord.Client):
             
             
             await asyncio.sleep(60)  # run every 60 seconds
-
 
 
 def main(): 
