@@ -1,6 +1,9 @@
+dotenv
 openai
 sentence_transformers
 discord.py
 easydict
 suntime
+spotipy
+transformers==3.4.0
 git+https://github.com/ml4a/ml4a-guides.git@ml4a.net#egg=ml4a
