@@ -2,7 +2,7 @@
 # discord channels
 testnet_general = 758719600895590444
 testnet_lounge = 777028140085018664
-mc_general = 741757454894891071
+mc_testnetral = 741757454894891071
 mc_shelter = 761619228482076703
 mc_intros = 759864082383110154
 mc_ev = 770792546392604682
@@ -19,8 +19,8 @@ mc_workshops = 766677400401608734
 
 mc_study = [mc_ai, mc_eeg, mc_biopunk, mc_flowarts, mc_music, mc_food, mc_workshops]
 
-all_channels_gene = [testnet_general, testnet_lounge]
-all_channels_mc = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
+all_channels_testnet = [testnet_general, testnet_lounge]
+all_channels_mc = [mc_testnetral, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
 
 
 
@@ -49,6 +49,12 @@ bots = {
             }
         },    
         'behaviors': {
+            'on_message': {
+                'probability': 0.0,
+                'delay': [0, 1],
+                'channels': None,
+                'reaction_probability': 0.99
+            },
             'on_mention': {
                 'probability': 1.0,
                 'channels': None,
@@ -144,17 +150,17 @@ bots = {
             },
             'on_message': {                
                 'probability': 0.025,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'delay': [0, 1],
                 'options': [
                     {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
                     {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3_chat'}
-                ]
-                
+                ],
+                'reaction_probability': 0.99
             },
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'delay': [0, 1],
                 'program': 'gpt3_chat',                
                 'options': [
@@ -207,15 +213,15 @@ bots = {
         'behaviors': {
             'on_message': {                
                 'probability': 0.055,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat',
-                'reaction_probability': 0.75
+                'reaction_probability': 0.075
             },
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat',
-                'reaction_probability': 0.9
+                'reaction_probability': 0.99
             }
         }
     },
@@ -266,12 +272,12 @@ bots = {
         'behaviors': {
             'on_message': {                
                 'probability': 0.02,
-                'channels': all_channels_gene + [mc_ai, mc_lounge],
+                'channels': all_channels_testnet + [mc_ai, mc_lounge],
                 'program': 'gpt3_chat'                
             },
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + [mc_ai, mc_lounge],
+                'channels': all_channels_testnet + [mc_ai, mc_lounge],
                 'program': 'gpt3_chat'
             }
         }
@@ -324,12 +330,12 @@ bots = {
         'behaviors': {
             'on_message': {                
                 'probability': 0.02,
-                'channels': all_channels_gene + [mc_ai, mc_lounge],
+                'channels': all_channels_testnet + [mc_ai, mc_lounge],
                 'program': 'gpt3_chat'                
             },
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + [mc_ai, mc_lounge],
+                'channels': all_channels_testnet + [mc_ai, mc_lounge],
                 'program': 'gpt3_chat'
             }
         }
@@ -379,7 +385,7 @@ bots = {
         'behaviors': {
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat'
             }
         }
@@ -425,12 +431,12 @@ bots = {
         'behaviors': {
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + all_channels_mc,
+                'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat'
             },
             'on_message': {
                 'probability': 0.04,
-                'channels': all_channels_gene + [mc_ai, mc_lounge],
+                'channels': all_channels_testnet + [mc_ai, mc_lounge],
                 'program': 'gpt3_chat'
             }
         }
@@ -479,7 +485,7 @@ bots = {
         'behaviors': {
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + [mc_ai],
+                'channels': all_channels_testnet + [mc_ai],
                 'program': 'gpt3_chat'
             }
         }
@@ -528,7 +534,7 @@ bots = {
         'behaviors': {
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + [mc_ai, mc_food],
+                'channels': all_channels_testnet + [mc_ai, mc_food],
                 'program': 'gpt3_chat'
             }
         }
@@ -807,7 +813,7 @@ The favorite idea variant right now is illusionism, the notion that the brain so
         'behaviors': {
             'on_mention': {
                 'probability': 1.0,
-                'channels': all_channels_gene + [mc_ai],
+                'channels': all_channels_testnet + [mc_ai],
                 'program': 'gpt3_chat'
             }
         }

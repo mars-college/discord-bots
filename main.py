@@ -23,18 +23,14 @@ from programs import ml4a_client
 from programs import spotify
 
 from bots import bots
+from emojis import emoji_docs
 
-    
 botlist = ['qa', 'mechanicalduck'] 
 botlist = ['mesa']
 botlist = ['mesa', 'mechanicalduck', 'chatsubo', 'wall-e', 'eve', 'facts', 'philosophy', 'deeplearning', 'kitchen', 'qa']
+botlist = ['chatsubo', 'mechanicalduck', 'mesa']
 
-
-# spotify program & json (credentials)
-#  - add to playlist
-# gpt3_prompt
-# setup dms???
-# mesa timed switch to mc
+emoji_search_results = {}
 
 
 def utc_to_local(utc_dt):
@@ -152,34 +148,49 @@ class DiscordBot(discord.Client):
         await channel.send(response, embed=embed, file=file)
 
     
+
     async def add_reaction(self, message):
+        print("lets add a reaction 2", self.user.name)
         last_message = re.sub('<@!?[0-9]+>', '', message.content)
 
-        reaction_prompt = \
-            "This bot reacts to sentences with a single emoji.\n\n"\
-            "Sentence: I'm so happy about everything today! The world is wonderful.\n"\
-            "Emoji: 😊\n"\
-            "Sentence: I really wish the world were a better place. I'm sad.\n"\
-            "Emoji: 😞\n"\
-            "Sentence: That was the funniest joke ever, haha.\n"\
-            "Emoji: 😂\n"\
-            "Sentence: "+last_message.strip()+"\n"\
-            "Emoji:"
+#         reaction_prompt = \
+#             "This bot reacts to sentences with a single emoji.\n\n"\
+#             "Sentence: I'm so happy about everything today! The world is wonderful.\n"\
+#             "Emoji: 😊\n"\
+#             "Sentence: I really wish the world were a better place. I'm sad.\n"\
+#             "Emoji: 😞\n"\
+#             "Sentence: That was the funniest joke ever, haha.\n"\
+#             "Emoji: 😂\n"\
+#             "Sentence: "+last_message.strip()+"\n"\
+#             "Emoji:"
 
-        # kind of expensive for what it is...
-        emoji = gpt3.complete(reaction_prompt,
-            stops=['\n'],
-            max_tokens=3,
-            temperature=0.5,
-            engine='davinci')
+#         # kind of expensive for what it is...
+#         reaction = gpt3.complete(reaction_prompt,
+#             stops=['\n'],
+#             max_tokens=3,
+#             temperature=0.5,
+#             engine='davinci')
+        candidates = list(emoji_docs.keys())
+        if last_message in emoji_search_results:
+            result = emoji_search_results[last_message]
+        else:
+            result = gpt3.search(candidates, last_message, engine='curie')
+            emoji_search_results[last_message] = result
+        scores = [doc['score'] for doc in result['data']]
+        ranked_queries = list(reversed(np.argsort(scores)))
+        ranked_candidates = [candidates[idx] for idx in ranked_queries]
+        top_candidate = ranked_candidates[0]
+        reaction = random.choice(emoji_docs[top_candidate]).strip()
 
-        await message.add_reaction(emoji.strip())
+
+        await message.add_reaction(reaction)
 
     
     async def on_message(self, message):
         if not self.ready:
             return
-        
+        print("lets add a reaction 0", self.user.name)
+
         # lookup & replace tables from member id's to variables e.g. <P1>, <S>
         await self.update_member_lookup(message)
 
@@ -199,9 +210,11 @@ class DiscordBot(discord.Client):
         if context is not None \
         and not author_is_self \
         and 'reaction_probability' in context \
-        and (random.random() < context.reaction_probability):
+        and (random.random() < 1.0): #context.reaction_probability):
+            print("lets add a reaction 1", self.user.name)
             await self.add_reaction(message)
 
+             
         # skipping conditions
         channel_eligible = (message.channel.id in context.channels) if context and context.channels else True
         busy = len(self.timestamps) > 0

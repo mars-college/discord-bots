@@ -67,7 +67,7 @@ def search(documents, query, engine='davinci'):
         'Content-Type': 'application/json',
         'Authorization': 'Bearer %s' % os.getenv('OPENAI_API_KEY'),
     }
-    response = requests.post('https://api.openai.com/v1/engines/%s/search' % engine, headers=headers, data=data)
+    response = requests.post('https://api.openai.com/v1/engines/{}/search'.format(engine), headers=headers, data=data)
     result = json.loads(response.text)
     return result
 
