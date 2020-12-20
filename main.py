@@ -25,10 +25,10 @@ from programs import spotify
 from bots import bots
 from emojis import emoji_docs
 
-botlist = ['qa', 'mechanicalduck'] 
-botlist = ['mesa']
-botlist = ['mesa', 'mechanicalduck', 'chatsubo', 'wall-e', 'eve', 'facts', 'philosophy', 'deeplearning', 'kitchen', 'qa']
-botlist = ['chatsubo', 'mechanicalduck', 'mesa']
+botlist = ['sunrisesunset', 'mesa', 'mechanicalduck', 
+           'chatsubo', 'wall-e', 'eve', 
+           'facts', 'philosophy', 'deeplearning', 
+           'kitchen', 'qa']
 
 emoji_search_results = {}
 
@@ -90,10 +90,10 @@ class DiscordBot(discord.Client):
         self.var2member = var2member
 
                 
-    async def run_program(self, program, message, channel=None):
+    async def run_program(self, program, message, channel=None, program_idx=0):
         if channel is None:
             channel = message.channel
-
+        
         response, embed, file = '', None, None
 
         ##########################################
@@ -107,12 +107,15 @@ class DiscordBot(discord.Client):
                 self.member2var, 
                 self.var2member)
             
+            
         ##########################################
         ## GPT-3 single prompt
         ##########################################
 
         elif program == 'gpt3_prompt':
             s = self.settings.programs.gpt3_prompt
+            s = [s] if not isinstance(s, list) else s
+            s = s[program_idx]
             response = gpt3.complete(
                 s.prompt, 
                 stops=s.stops if 'stops' in s else None, 
@@ -120,16 +123,21 @@ class DiscordBot(discord.Client):
                 temperature=s.temperature if 'temperature' in s else 0.9, 
                 engine=s.engine if 'engine' in s else 'davinci',
                 max_completions=3)
+            if 'preface' in s:
+                response = s.preface + response
+
             
         ##########################################
         ## ml4a
         ##########################################
 
-        elif program == 'ml4a':            
-            await message.channel.send('<@!{}> Drawing something, give me a few minutes...'.format(message.author.id))
+        elif program == 'ml4a':  
+            if message is not None:
+                await channel.send('<@!{}> Drawing something, give me a few minutes...'.format(message.author.id))
             local_filename = ml4a_client.run(self.settings.programs.ml4a)
             file = discord.File(local_filename, filename=local_filename)
-            response = '<@!{}>'.format(message.author.id)
+            if message is not None:
+                response = '<@!{}>'.format(message.author.id)
          
         ##########################################
         ## Spotify                    
@@ -140,56 +148,43 @@ class DiscordBot(discord.Client):
             if image_url:
                 embed = discord.Embed()
                 embed.set_image(url=image_url)
-        
+
         # truncate to Discord max character limit
         response = response[:2000]
         
         # send to discord
         await channel.send(response, embed=embed, file=file)
 
-    
 
     async def add_reaction(self, message):
-        print("lets add a reaction 2", self.user.name)
         last_message = re.sub('<@!?[0-9]+>', '', message.content)
-
-#         reaction_prompt = \
-#             "This bot reacts to sentences with a single emoji.\n\n"\
-#             "Sentence: I'm so happy about everything today! The world is wonderful.\n"\
-#             "Emoji: 😊\n"\
-#             "Sentence: I really wish the world were a better place. I'm sad.\n"\
-#             "Emoji: 😞\n"\
-#             "Sentence: That was the funniest joke ever, haha.\n"\
-#             "Emoji: 😂\n"\
-#             "Sentence: "+last_message.strip()+"\n"\
-#             "Emoji:"
-
-#         # kind of expensive for what it is...
-#         reaction = gpt3.complete(reaction_prompt,
-#             stops=['\n'],
-#             max_tokens=3,
-#             temperature=0.5,
-#             engine='davinci')
         candidates = list(emoji_docs.keys())
         if last_message in emoji_search_results:
             result = emoji_search_results[last_message]
         else:
             result = gpt3.search(candidates, last_message, engine='curie')
             emoji_search_results[last_message] = result
+        if 'data' not in result or len(result['data']) == 0:
+            return
         scores = [doc['score'] for doc in result['data']]
         ranked_queries = list(reversed(np.argsort(scores)))
         ranked_candidates = [candidates[idx] for idx in ranked_queries]
         top_candidate = ranked_candidates[0]
         reaction = random.choice(emoji_docs[top_candidate]).strip()
-
-
+        options = [{'candidate': candidates[idx], 'score': scores[idx]} 
+                   for idx in ranked_queries
+                   if scores[idx] > 20][:4]
+        if len(options) == 0:
+            return
+        selected = random.choices([o['candidate'] for o in options], 
+                                  weights=[o['score'] for o in options], k=1)[0]
+        reaction = random.choice(emoji_docs[selected]).strip()
         await message.add_reaction(reaction)
 
     
     async def on_message(self, message):
         if not self.ready:
             return
-        print("lets add a reaction 0", self.user.name)
 
         # lookup & replace tables from member id's to variables e.g. <P1>, <S>
         await self.update_member_lookup(message)
@@ -210,15 +205,13 @@ class DiscordBot(discord.Client):
         if context is not None \
         and not author_is_self \
         and 'reaction_probability' in context \
-        and (random.random() < 1.0): #context.reaction_probability):
-            print("lets add a reaction 1", self.user.name)
+        and (random.random() < context.reaction_probability):
             await self.add_reaction(message)
-
              
         # skipping conditions
         channel_eligible = (message.channel.id in context.channels) if context and context.channels else True
         busy = len(self.timestamps) > 0
-        decide_to_reply = False if not context else (random.random() < context.probability)
+        decide_to_reply = False if not context else (random.random() < context.response_probability)
 
         # if any skipping conditions are True, stop
         if busy or author_is_self or not decide_to_reply or not channel_eligible:
@@ -260,7 +253,11 @@ class DiscordBot(discord.Client):
     async def timed_event(self, event):
         channel = self.get_channel(event.channel)
         message = None
-        await self.run_program(event.program, message, channel)
+        program_index = event.program_index if 'program_index' in event else 0
+        await self.run_program(event.program, 
+                               message, 
+                               channel, 
+                               program_idx=program_index)
         
         
     async def schedule_timed_events(self):
@@ -275,6 +272,12 @@ class DiscordBot(discord.Client):
             for t in self.settings.behaviors.timed:
                 if t.type == 'daily':
                     target_time = now.replace(hour=t.time[0], minute=t.time[1], second=0)
+                elif t.type == 'sunrise':
+                    latitude = float(os.getenv('LOCAL_LATITUDE'))
+                    longitude = float(os.getenv('LOCAL_LONGITUDE'))
+                    sunrise = Sun(latitude, longitude).get_sunrise_time()
+                    sunrise = utc_to_local(sunrise).replace(tzinfo=None)
+                    target_time = sunrise - timedelta(seconds=t.minutes_before * 60)
                 elif t.type == 'sunset':
                     latitude = float(os.getenv('LOCAL_LATITUDE'))
                     longitude = float(os.getenv('LOCAL_LONGITUDE'))
@@ -287,7 +290,7 @@ class DiscordBot(discord.Client):
             timed_events = sorted(timed_events, key=lambda k: k['time']) 
             next_event = timed_events[0]
             time_until = next_event['time'] - now
-            print('time until now', time_until, time_until.seconds)
+            print('time until next event: {}'.format(time_until))
 
             await asyncio.sleep(time_until.seconds)
             await self.timed_event(next_event['event'])
@@ -296,21 +299,24 @@ class DiscordBot(discord.Client):
       
     async def background_process(self):
         await self.wait_until_ready()
-        bg = self.settings.behaviors.background
-        if not 'probability_trigger' in bg or not 'every_num_minutes' in bg:
+        background = self.settings.behaviors.background        
+        if not 'probability_trigger' in background or not 'every_num_minutes' in background:
             return
-        prob_trigger = 1.0-math.pow(1.0-bg.probability_trigger, 
-                                    1.0/bg.every_num_minutes)
+        prob_trigger = 1.0-math.pow(1.0-background.probability_trigger, 
+                                    1.0/background.every_num_minutes)
         while not self.is_closed():
-            
+
             if (random.random() < prob_trigger):
-                #channel = self.get_channel(758719600895590444) # channel ID goes here
-                #await channel.send('hello !')
-                pass # disabled for a minute
-            
-            
-            
-            await asyncio.sleep(60)  # run every 60 seconds
+                channel = self.get_channel(background.channel)
+                message = None
+                program_index = background.program_index if 'program_index' in background else 0
+
+                await self.run_program(background.program, 
+                                       message, 
+                                       channel, 
+                                       program_idx=program_index)
+
+            await asyncio.sleep(60) # run every 60 seconds
 
 
 def main(): 

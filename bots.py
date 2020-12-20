@@ -2,7 +2,7 @@
 # discord channels
 testnet_general = 758719600895590444
 testnet_lounge = 777028140085018664
-mc_testnetral = 741757454894891071
+mc_general = 741757454894891071
 mc_shelter = 761619228482076703
 mc_intros = 759864082383110154
 mc_ev = 770792546392604682
@@ -20,14 +20,136 @@ mc_workshops = 766677400401608734
 mc_study = [mc_ai, mc_eeg, mc_biopunk, mc_flowarts, mc_music, mc_food, mc_workshops]
 
 all_channels_testnet = [testnet_general, testnet_lounge]
-all_channels_mc = [mc_testnetral, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
+all_channels_mc = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
 
 
 
 
 bots = {
     
-        
+         
+######################################################
+##  SUNRISE SUNSET
+######################################################
+
+    'sunrisesunset': 
+    {
+        'token_env': 'DISCORD_TOKEN_SUNRISESUNSET',
+        'debug': False,
+        'programs': {
+            'spotify': {
+                'name': 'Sunrise Sunset'
+            },
+            'gpt3_prompt': [{
+                'prompt': '''Here is a short poem about the beginning of a new day.
+
+I'll tell you how the sun rose, —
+A ribbon at a time.
+The steeples swam in amethyst,
+The news like squirrels ran.
+
+The hills untied their bonnets,
+The bobolinks begun.
+Then I said softly to myself,
+"That must have been the sun!" 
+
+
+
+Here is a short poem about the beginning of a new day.
+
+Dawn
+Is beautiful.
+Its new and raw.
+It's  beautifully honest.
+There's something redeeming
+about the early minutes our day
+It imitates the early minutes of our existence
+And erodes the nonsense and lies
+Of day-to-day survival.
+
+
+
+Here is a short poem about the beginning of a new day.
+
+Long before the postman comes
+The sun begins to rise,
+Far in the East if you should look
+You'd find it in the skies.
+At first it's just a streak of light
+Then all at once the world gets bright.
+
+Here is a short poem about the beginning of a new day.''', 
+                'engine': 'davinci',
+                'temperature': 0.9,
+                'max_tokens': 200,
+                'stops': ['\nHere is a short'],
+                'preface': 'A new day begins 😎\nHere is my poem of the day:\n\n'
+            }, {
+                'prompt': '''Here is a short poem about the sunset.
+
+Out of the sunset's red
+Into the blushing sea,
+The winds of day drop dead
+And dreams come home to me. —
+The sea is still,— and apart
+Is a stillness in my heart.
+
+
+
+Here is a short poem about the sunset.
+
+It is a beauteous evening, calm and free,
+The holy time is quiet as a Nun
+Breathless with adoration; the broad sun
+Is sinking down in its tranquility;
+The gentleness of heaven broods o’er the Sea …
+
+
+
+Here is a short poem about the sunset.
+
+The sun's still keeping the sky
+somewhat colored,
+even though it's already gone down
+beyond the horizon.
+
+
+
+Here is a short poem about the sunset.''', 
+                'engine': 'davinci',
+                'temperature': 0.9, 
+                'max_tokens': 200,
+                'stops': ['\nHere is a short'],
+                'preface': 'One hour until sunset! 😎\nHere is this evening\'s incantation:\n\n'
+            }]
+        },    
+        'behaviors': {
+            'on_message': {
+                'response_probability': 0.0,
+                'reaction_probability': 0.25,
+                'channels': None
+            },
+            'on_mention': {
+                'response_probability': 0.0,
+                'reaction_probability': 0.5,
+                'channels': None
+            },            
+            'timed': [{
+                'type': 'sunrise', 
+                'minutes_before': 0,
+                'program': 'gpt3_prompt', 'program_index': 0,
+                'channel': testnet_general + mc_general
+            },{
+                'type': 'sunset',
+                'minutes_before': 60,
+                'program': 'gpt3_prompt', 'program_index': 1,
+                'channel': testnet_general + mc_general
+            }]
+        }
+    },
+    
+    
+    
 ######################################################
 ##  MESA
 ######################################################
@@ -39,39 +161,22 @@ bots = {
         'programs': {
             'spotify': {
                 'name': 'Mesa'
-            },
-            'gpt3_prompt': {
-                'prompt': 'The following is a poem about the sunset.',
-                'engine': 'davinci',
-                'temperature': 0.85, 
-                'max_tokens': 200,
-                'preface': 'One hour until sunset 😎\n'
             }
         },    
         'behaviors': {
             'on_message': {
-                'probability': 0.0,
+                'response_probability': 0.0,
                 'delay': [0, 1],
                 'channels': None,
-                'reaction_probability': 0.99
+                'reaction_probability': 0.25
             },
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': None,
                 'delay': [0, 1],
-                'program': 'spotify'
-            },            
-            'timed': [{
-                'type': 'daily', 
-                'time': (22, 7),
-                'program': 'gpt3_prompt',
-                'channel': testnet_general
-            },{
-                'type': 'sunset',
-                'minutes_before': 1006,
-                'program': 'gpt3_prompt',
-                'channel': testnet_general
-            }]
+                'program': 'spotify',
+                'reaction_probability': 0.5
+            }
         }
     },
     
@@ -146,30 +251,33 @@ bots = {
         'behaviors': {
             'background': {
                 'probability_trigger': 0.5,
-                'every_num_minutes': 4
+                'every_num_minutes': 60 * 3,
+                'program': 'ml4a',
+                'channel': mc_ai
             },
             'on_message': {                
-                'probability': 0.025,
+                'response_probability': 0.025,
                 'channels': all_channels_testnet + all_channels_mc,
                 'delay': [0, 1],
                 'options': [
                     {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
                     {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3_chat'}
                 ],
-                'reaction_probability': 0.99
+                'reaction_probability': 0.5
             },
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + all_channels_mc,
                 'delay': [0, 1],
                 'program': 'gpt3_chat',                
                 'options': [
                     {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
                     {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3_chat'}
-                ]
+                ],
+                'reaction_probability': 0.5
             },
             'direct_message': {                
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'program': 'gpt3_dm'
             }
 
@@ -212,16 +320,16 @@ bots = {
         },    
         'behaviors': {
             'on_message': {                
-                'probability': 0.055,
+                'response_probability': 0.055,
                 'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat',
-                'reaction_probability': 0.075
+                'reaction_probability': 0.25
             },
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + all_channels_mc,
                 'program': 'gpt3_chat',
-                'reaction_probability': 0.99
+                'reaction_probability': 0.5
             }
         }
     },
@@ -271,14 +379,16 @@ bots = {
         },    
         'behaviors': {
             'on_message': {                
-                'probability': 0.02,
+                'response_probability': 0.02,
                 'channels': all_channels_testnet + [mc_ai, mc_lounge],
-                'program': 'gpt3_chat'                
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             },
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + [mc_ai, mc_lounge],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
             }
         }
     },
@@ -329,14 +439,16 @@ bots = {
         },    
         'behaviors': {
             'on_message': {                
-                'probability': 0.02,
+                'response_probability': 0.02,
                 'channels': all_channels_testnet + [mc_ai, mc_lounge],
-                'program': 'gpt3_chat'                
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             },
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + [mc_ai, mc_lounge],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
             }
         }
     },
@@ -384,9 +496,16 @@ bots = {
         },    
         'behaviors': {
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + all_channels_mc,
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
+            },
+            'on_message': {
+                'response_probability': 0.0,
+                'channels': None,
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             }
         }
     },
@@ -430,14 +549,16 @@ bots = {
         },    
         'behaviors': {
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + all_channels_mc,
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',                
+                'reaction_probability': 0.5
             },
             'on_message': {
-                'probability': 0.04,
+                'response_probability': 0.04,
                 'channels': all_channels_testnet + [mc_ai, mc_lounge],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             }
         }
     },
@@ -484,9 +605,10 @@ bots = {
         },    
         'behaviors': {
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + [mc_ai],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
             }
         }
     },
@@ -533,9 +655,16 @@ bots = {
         },    
         'behaviors': {
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + [mc_ai, mc_food],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
+            },
+            'on_message': {
+                'response_probability': 0.0,
+                'channels': all_channels_testnet + [mc_ai, mc_food],
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             }
         }
     },
@@ -812,9 +941,16 @@ The favorite idea variant right now is illusionism, the notion that the brain so
         },    
         'behaviors': {
             'on_mention': {
-                'probability': 1.0,
+                'response_probability': 1.0,
                 'channels': all_channels_testnet + [mc_ai],
-                'program': 'gpt3_chat'
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.5
+            },
+            'on_message': {
+                'response_probability': 0.0,
+                'channels': all_channels_testnet + [mc_ai],
+                'program': 'gpt3_chat',
+                'reaction_probability': 0.25
             }
         }
     }
