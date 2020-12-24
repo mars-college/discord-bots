@@ -4,7 +4,7 @@ mechanicalduck = {
     'token_env': 'DISCORD_TOKEN_MECHANICALDUCK',
     'debug': False,
     'programs': {
-        'gpt3_chat': {
+        'gpt3_chat': [{
             'name': 'Roger',
             'chat_history': {
                 'max_history': 3, 
@@ -33,8 +33,8 @@ mechanicalduck = {
             'engine': 'davinci',
             'temperature': 0.8, 
             'max_tokens': 50,
-        },
-        'gpt3_dm': {
+        }, 
+        {
             'name': 'AI',
             'characters': ['Human'],
             'chat_history': {
@@ -53,10 +53,10 @@ mechanicalduck = {
             },
             'erase_mentions': True,
             'force_mention': None,
-            'engine': 'curie',
+            'engine': 'davinci',
             'temperature': 0.92, 
             'max_tokens': 80,
-        },
+        }],
         'ml4a': {
             'model': 'neural_style'
         }
@@ -91,7 +91,8 @@ mechanicalduck = {
         },
         'direct_message': {                
             'response_probability': 1.0,
-            'program': 'gpt3_dm'
+            'program': 'gpt3_chat', 'program_index': 1,
+            'members': [404322488215142410]
         }
 
     }

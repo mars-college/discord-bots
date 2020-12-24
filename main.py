@@ -29,7 +29,7 @@ from emojis import emoji_docs
 botlist = ['sunrisesunset', 'mesa', 'mechanicalduck', 
            'chatsubo', 'wall-e', 'eve', 
            'facts', 'philosophy', 'deeplearning', 
-           'kitchen', 'qa']
+           'kitchen', 'qa', 'coach']
 
 emoji_search_results = {}
 
@@ -64,29 +64,29 @@ class DiscordBot(discord.Client):
     async def update_member_lookup(self, message):
         channel = message.channel
         last_senders = self.last_senders[channel.id] if channel.id in self.last_senders else None
-        
+
         if last_senders is None:
             message_history = await channel.history(limit=50).flatten()
             last_senders  = [member.id for member in message.guild.members]
             last_senders += [msg.author.id for msg in message_history[::-1]]
         else:
             last_senders += [message.author.id]
-            
+
         last_senders = list(dict.fromkeys(reversed(last_senders)))
         if self.user.id in last_senders:
             last_senders.remove(self.user.id)
 
         self.last_senders[channel.id] = last_senders
-        
+
         member2var = {str(member): '<P{}>'.format(m+1) for m, member in enumerate(last_senders)}
         member2var[str(self.user.id)] = '<S>'        
         var2member = {v: '<@!{}>'.format(k) for k, v in member2var.items()}
-        
+
         # duplicate var2members in case vars > members
         num_vars = len(var2member)-1
         for v in range(num_vars+1, 25):
             var2member['<P{}>'.format(v)] = var2member['<P{}>'.format(1+(v-1)%num_vars)]
-        
+
         self.member2var = member2var
         self.var2member = var2member
 
@@ -106,7 +106,8 @@ class DiscordBot(discord.Client):
                 self.settings.programs.gpt3_chat, 
                 message, 
                 self.member2var, 
-                self.var2member)
+                self.var2member,
+                program_idx)
             
             
         ##########################################
@@ -131,7 +132,8 @@ class DiscordBot(discord.Client):
             file = discord.File(local_filename, filename=local_filename)
             if message is not None:
                 response = '<@!{}>'.format(message.author.id)
-         
+
+        
         ##########################################
         ## Spotify                    
         ##########################################
@@ -179,32 +181,46 @@ class DiscordBot(discord.Client):
         if not self.ready:
             return
 
-        # lookup & replace tables from member id's to variables e.g. <P1>, <S>
-        await self.update_member_lookup(message)
-
         # mentions and metadata
+        private = isinstance(message.channel, discord.channel.DMChannel)
         all_mentions = re.findall('<@!?([0-9]+)>', message.content)
         mentioned = str(self.user.id) in all_mentions
         author_is_self = message.author.id == self.user.id
         
         # which context (on_message, on_mention, or background)
         behavior = self.settings.behaviors
-        if mentioned:
+        if private:
+            context = behavior.direct_message if 'direct_message' in behavior else None
+        elif mentioned:
             context = behavior.on_mention if 'on_mention' in behavior else None
         else:
             context = behavior.on_message if 'on_message' in behavior else None
-
+            
+        # lookup & replace tables from member id's to variables e.g. <P1>, <S>
+        if not private:
+            await self.update_member_lookup(message)
+        else:
+            self.member2var = {str(message.author.id): '<P1>', str(self.user.id): '<S>'}
+            self.var2member = {'<P1>': str(message.author.id), '<S>': str(self.user.id)}
+        
+        # if no behavior for this trigger, stop
+        if context is None:
+            return
+            
         # maybe add a reaction to the message
-        if context is not None \
-        and not author_is_self \
+        if not author_is_self \
         and 'reaction_probability' in context \
         and (random.random() < context.reaction_probability):
             await self.add_reaction(message)
              
         # skipping conditions
-        channel_eligible = (message.channel.id in context.channels) if context and context.channels else True
         busy = len(self.timestamps) > 0
-        decide_to_reply = False if not context else (random.random() < context.response_probability)
+        decide_to_reply = (random.random() < context.response_probability)
+        if private:
+            channel_eligible = (message.author.id in context.members) if context.members else True
+            print (message.author.id, context.members, message.author.id in context.members)
+        else:
+            channel_eligible = (message.channel.id in context.channels) if context.channels else True
 
         # if any skipping conditions are True, stop
         if busy or author_is_self or not decide_to_reply or not channel_eligible:
@@ -236,21 +252,27 @@ class DiscordBot(discord.Client):
             if not program:
                 print('No program selected')
                 return
+            
+        # choose program index if there are multiple
+        program_idx = context.program_index if 'program_index' in context else 0
         
         # delay, run program, remove active timestamp
         await asyncio.sleep(timestamp['delay'])
-        await self.run_program(program, message)
+        await self.run_program(program, 
+                               message,
+                               channel=None,
+                               program_idx=program_idx)
         self.timestamps.remove(timestamp)
 
 
     async def timed_event(self, event):
         channel = self.get_channel(event.channel)
         message = None
-        program_index = event.program_index if 'program_index' in event else 0
+        program_idx = event.program_index if 'program_index' in event else 0
         await self.run_program(event.program, 
                                message, 
                                channel, 
-                               program_idx=program_index)
+                               program_idx=program_idx)
         
         
     async def schedule_timed_events(self):
