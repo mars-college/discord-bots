@@ -19,6 +19,7 @@ import spotipy
 import gpt3
 
 from programs import gpt3_chat
+from programs import gpt3_prompt
 from programs import ml4a_client
 from programs import spotify
 
@@ -113,18 +114,10 @@ class DiscordBot(discord.Client):
         ##########################################
 
         elif program == 'gpt3_prompt':
-            s = self.settings.programs.gpt3_prompt
-            s = [s] if not isinstance(s, list) else s
-            s = s[program_idx]
-            response = gpt3.complete(
-                s.prompt, 
-                stops=s.stops if 'stops' in s else None, 
-                max_tokens=s.max_tokens if 'max_tokens' in s else 50, 
-                temperature=s.temperature if 'temperature' in s else 0.9, 
-                engine=s.engine if 'engine' in s else 'davinci',
-                max_completions=3)
-            if 'preface' in s:
-                response = s.preface + response
+            response = await gpt3_prompt.run(
+                self.settings.programs.gpt3_prompt,
+                message,
+                program_idx)
 
             
         ##########################################

@@ -20,19 +20,19 @@ def run(settings):
         image.starrynight(),
         image.scream(),
         image.tubingen(),    
-        "flowers.jpg",
-        "fire.jpg",
-        "lightning.jpg",
-        "nebula.jpg"]
+        "programs/ml4a_images/flowers.jpg",
+        "programs/ml4a_images/fire.jpg",
+        "programs/ml4a_images/lightning.jpg",
+        "programs/ml4a_images/nebula.jpg"]
     
     style_images = [
         image.escher(),
         image.hokusai(),
         image.starrynight(),
-        "flowers.jpg",
-        "fire.jpg",
-        "lightning.jpg",
-        "nebula.jpg",
+        "programs/ml4a_images/flowers.jpg",
+        "programs/ml4a_images/fire.jpg",
+        "programs/ml4a_images/lightning.jpg",
+        "programs/ml4a_images/nebula.jpg",
         "https://www.ignant.com/wp-content/uploads/2014/03/2High_Voltage_Image_MakingPhillip-Stearns01-360x272.jpg",
         "https://scene360.com/wp-content/uploads/2014/12/phillip-stearns-09.jpg",
         "https://morrismuseum.org/wp-content/uploads/2019/09/Elan.-Out-of-Place-2019.-Photo-by-Cameran-Ko.-Smaller-1.jpg",
@@ -66,4 +66,4 @@ def run(settings):
     
     img = neural_style.run(config)
     image.save(img, 'ml4aimage.png')
-    return 'ml4aimage.png'
+    return 'programs/ml4a_images/ml4aimage.png'
