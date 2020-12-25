@@ -201,7 +201,7 @@ class DiscordBot(discord.Client):
             await self.update_member_lookup(message)
         else:
             self.member2var = {str(message.author.id): '<P1>', str(self.user.id): '<S>'}
-            self.var2member = {'<P1>': str(message.author.id), '<S>': str(self.user.id)}
+            self.var2member = {'<P1>': '<@!{}>'.format(message.author.id), '<S>': '<@!{}>'.format(self.user.id)}
         
         # if no behavior for this trigger, stop
         if context is None:
