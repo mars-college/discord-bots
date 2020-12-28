@@ -268,13 +268,13 @@ The favorite idea variant right now is illusionism, the notion that the brain so
             'response_probability': 1.0,
             'channels': all_channels_testnet + [mc_ai],
             'program': 'gpt3_chat',
-            'reaction_probability': 0.5
+            'reaction_probability': 0.25
         },
         'on_message': {
             'response_probability': 0.0,
             'channels': all_channels_testnet + [mc_ai],
             'program': 'gpt3_chat',
-            'reaction_probability': 0.25
+            'reaction_probability': 0.125
         }
     }
 }

@@ -39,7 +39,7 @@ mechanicalduck = {
             'characters': ['Human'],
             'chat_history': {
                 'max_history': 10, 
-                'max_age': 60*60*2
+                'max_age': 60*2
             },
             'intro': "<S> is an AI chatbot who is kind, helpful, and knowledgeable. The chatbot is having a conversation with <P1>",
             'messages_pre': [
@@ -64,7 +64,7 @@ mechanicalduck = {
     'behaviors': {
         'background': {
             'probability_trigger': 0.5,
-            'every_num_minutes': 60 * 3,
+            'every_num_minutes': 60 * 8,
             'program': 'ml4a',
             'channel': mc_ai
         },
@@ -76,7 +76,7 @@ mechanicalduck = {
                 {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
                 {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3_chat'}
             ],
-            'reaction_probability': 0.5
+            'reaction_probability': 0.125
         },
         'on_mention': {
             'response_probability': 1.0,
@@ -87,7 +87,7 @@ mechanicalduck = {
                 {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
                 {'document': 'Write a poem, short story, or novel.', 'program': 'gpt3_chat'}
             ],
-            'reaction_probability': 0.5
+            'reaction_probability': 0.25
         },
         'direct_message': {                
             'response_probability': 1.0,

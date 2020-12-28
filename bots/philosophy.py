@@ -35,13 +35,13 @@ philosophy = {
             'response_probability': 1.0,
             'channels': all_channels_testnet + all_channels_mc,
             'program': 'gpt3_chat',                
-            'reaction_probability': 0.5
+            'reaction_probability': 0.25
         },
         'on_message': {
-            'response_probability': 0.04,
+            'response_probability': 0.025,
             'channels': all_channels_testnet + [mc_ai, mc_lounge],
             'program': 'gpt3_chat',
-            'reaction_probability': 0.25
+            'reaction_probability': 0.125
         }
     }
 }

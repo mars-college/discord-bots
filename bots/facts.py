@@ -39,13 +39,13 @@ facts = {
             'response_probability': 1.0,
             'channels': all_channels_testnet + all_channels_mc,
             'program': 'gpt3_chat',
-            'reaction_probability': 0.5
+            'reaction_probability': 0.35
         },
         'on_message': {
             'response_probability': 0.0,
             'channels': None,
             'program': 'gpt3_chat',
-            'reaction_probability': 0.25
+            'reaction_probability': 0.1
         }
     }
 }

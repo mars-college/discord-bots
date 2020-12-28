@@ -13,14 +13,14 @@ mesa = {
             'response_probability': 0.0,
             'delay': [0, 1],
             'channels': None,
-            'reaction_probability': 0.25
+            'reaction_probability': 0.125
         },
         'on_mention': {
             'response_probability': 1.0,
             'channels': None,
             'delay': [0, 1],
             'program': 'spotify',
-            'reaction_probability': 0.5
+            'reaction_probability': 0.25
         }
     }
 }

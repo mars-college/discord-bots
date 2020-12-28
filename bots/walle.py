@@ -9,7 +9,7 @@ walle = {
             'characters': ['Eve'],
             'chat_history': {
                 'max_history': 8, 
-                'max_age': 60*60*2
+                'max_age': 60 * 2
             },
             'intro': "Eve and Wally are best friends. Wally is generous and talented, always helping his daydreamer friend Eve figure out her creative and offbeat ideas.", 
             'messages_pre': [
@@ -38,16 +38,16 @@ walle = {
     },    
     'behaviors': {
         'on_message': {                
-            'response_probability': 0.02,
+            'response_probability': 0.01,
             'channels': all_channels_testnet + [mc_ai, mc_lounge],
             'program': 'gpt3_chat',
-            'reaction_probability': 0.25
+            'reaction_probability': 0.125
         },
         'on_mention': {
             'response_probability': 1.0,
             'channels': all_channels_testnet + [mc_ai, mc_lounge],
             'program': 'gpt3_chat',
-            'reaction_probability': 0.5
+            'reaction_probability': 0.25
         }
     }
 }
