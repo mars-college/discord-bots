@@ -93,24 +93,24 @@ sunrisesunset = {
     'behaviors': {
         'on_message': {
             'response_probability': 0.0,
-            'reaction_probability': 0.25,
+            'reaction_probability': 0.125,
             'channels': None
         },
         'on_mention': {
             'response_probability': 0.0,
-            'reaction_probability': 0.5,
+            'reaction_probability': 0.25,
             'channels': None
         },            
         'timed': [{
             'type': 'sunrise', 
             'minutes_before': 0,
             'program': 'gpt3_prompt', 'program_index': 0,
-            'channel': testnet_general + mc_general
+            'channel': mc_general
         },{
             'type': 'sunset',
             'minutes_before': 60,
             'program': 'gpt3_prompt', 'program_index': 1,
-            'channel': testnet_general + mc_general
+            'channel': mc_general
         }]
     }
 }

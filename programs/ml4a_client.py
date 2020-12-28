@@ -65,5 +65,5 @@ def run(settings):
     print(config)
     
     img = neural_style.run(config)
-    image.save(img, 'ml4aimage.png')
+    image.save(img, 'programs/ml4a_images/ml4aimage.png')
     return 'programs/ml4a_images/ml4aimage.png'
