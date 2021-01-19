@@ -36,13 +36,13 @@ kitchen = {
     'behaviors': {
         'on_mention': {
             'response_probability': 1.0,
-            'channels': all_channels_testnet + [mc_ai, mc_food],
+            'channels': all_channels_testnet + [mc_ai, mc_lounge, mc_food],
             'program': 'gpt3_chat',
             'reaction_probability': 0.25
         },
         'on_message': {
             'response_probability': 0.0,
-            'channels': all_channels_testnet + [mc_ai, mc_food],
+            'channels': all_channels_testnet + [mc_ai, mc_lounge, mc_food],
             'program': 'gpt3_chat',
             'reaction_probability': 0.125
         }
