@@ -2,6 +2,8 @@
 # discord channels
 testnet_general = 758719600895590444
 testnet_lounge = 777028140085018664
+
+# mars college public
 mc_general = 741757454894891071
 mc_shelter = 761619228482076703
 mc_intros = 759864082383110154
@@ -18,6 +20,47 @@ mc_food = 764623050993434655
 mc_workshops = 766677400401608734
 
 mc_study = [mc_ai, mc_eeg, mc_biopunk, mc_flowarts, mc_music, mc_food, mc_workshops]
+
+# mars college bombay
+mcb_general = 792995800392531980
+mcb_venus = 788835610453737534
+mcb_mars = 796944793904218122
+mcb_wisp = 748633305230082269
+mcb_media = 795454775331258368
+mcb_solar = 795455935082135563
+mcb_ironmartian = 795711829006876703
+mcb_telepresence = 795810713876693022
+mcb_random = 796203230437834752
+mcb_mail = 796427928081793024
+mcb_resources = 796459167304253500
+mcb_bikes = 796869440229998662
+mcb_gardening = 797195470979596339
+mcb_spanish = 796108889124896829
+mcb_german = 797271301655101530
+mcb_french = 797691063367761940
+mcb_recycling = 797527749614370816
+mcb_covid = 797543129749651456
+mcb_tools = 797543679035572264
+mcb_flowarts = 797616091291058198
+mcb_drones = 797544927365693450
+mcb_euc = 797570860441403422
+mcb_chatsubo = 797639482601111562
+mcb_salton_sea_salt_company = 797859485129375754
+mcb_bbac = 797899788636258315
+mcb_movienight = 797912087938596914
+mcb_laundry = 797929581562036256
+mcb_shopping = 797941040777920522
+mcb_bitcoin = 797999957528543272
+mcb_friendly = room = 798000816664608769
+mcb_road_to_mars = 798001743001550848
+mcb_lost_and_found = 798002088286093342
+mcb_workshops = 798002477634027561
+mcb_dnb = 798002737445994538
+mcb_shipping_containers = 798003067807203359
+mcb_local_specific = 798003311092695071
+mcb_vr = 798003669026603028
+
+
 
 all_channels_testnet = [testnet_general, testnet_lounge]
 all_channels_mc = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
