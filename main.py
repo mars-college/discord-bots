@@ -29,12 +29,11 @@ from emojis import emoji_docs
 
 # Which bots to run from the bots directory
 botlist = [
-    'sunrisesunset', 'mesa', 'mechanicalduck', 
+    'sunrisesunset', 'mesa', #'mechanicalduck', 
     'chatsubo', 'wall-e', 'eve', 
     'facts', 'philosophy', 'deeplearning', 
     'kitchen', 'qa', 'coach'
 ]
-#botlist=['sunrisesunset', 'coach', 'philosophy', 'mesa', 'chatsubo']
 
 # Reactions/emoji preferences
 emoji_search_results = {}
@@ -62,7 +61,7 @@ class DiscordBot(discord.Client):
         
     async def on_ready(self):
         if self.ready:
-            print('{} has re-connected: {}'.format(self.user))
+            print('{} has re-connected.'.format(self.user))
             return
 
         self.ready = True
@@ -373,11 +372,9 @@ class DiscordBot(discord.Client):
     async def background_process(self):
         await self.wait_until_ready()
         
-        background = self.settings.behaviors.background 
-        
+        background = self.settings.behaviors.background         
         channel = self.get_channel(background.channel)
         program_index = background.program_index if 'program_index' in background else 0
-        
         
         while not self.is_closed():
 
@@ -393,6 +390,13 @@ class DiscordBot(discord.Client):
                 last_message_time = last_message.created_at
                 await self.update_lookups(last_message)
                 last_message_time = self.last_timestamps[channel]
+
+            # is_question = last_message.strip().endswith('?')
+            # question_to_me = is_question and second_last_sender.id == self.user.id
+            # if question_to_me:
+            #       probability_trigger = 1.0
+
+            # skip below clause if question_to_me
 
             # if not enough time has elapsed since last message, skip
             now = datetime.now()
