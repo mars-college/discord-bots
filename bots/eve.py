@@ -39,14 +39,14 @@ eve = {
     },    
     'behaviors': {
         'on_message': {                
-            'response_probability': 0.015,
-            'channels': all_channels_testnet + [mc_ai, mc_lounge],
+            'response_probability': 0.0,
+            'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.1
         },
         'on_mention': {
             'response_probability': 1.0,
-            'channels': all_channels_testnet + [mc_ai, mc_lounge],
+            'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.35
         }

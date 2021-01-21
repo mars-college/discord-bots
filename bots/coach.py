@@ -33,12 +33,21 @@ coach = {
             'temperature': 0.93, 
             'max_tokens': 100,
         },
+        'calendar_notify': {
+            'include_description': True
+        }
     },    
     'behaviors': {
         'direct_message': {                
             'response_probability': 1.0,
             'program': 'gpt3_chat', 'program_index': 0,
             'members': [404322488215142410, 606313423126528010]
+        },
+        'calendar': {
+            'channel': testnet_general,
+            'program': 'calendar_notify',
+            'minutes_before': 15,
+            'check_every': 5
         }
     }
 }

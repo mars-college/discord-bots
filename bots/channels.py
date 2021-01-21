@@ -51,7 +51,7 @@ mcb_movienight = 797912087938596914
 mcb_laundry = 797929581562036256
 mcb_shopping = 797941040777920522
 mcb_bitcoin = 797999957528543272
-mcb_friendly = room = 798000816664608769
+mcb_friendly_room = 798000816664608769
 mcb_road_to_mars = 798001743001550848
 mcb_lost_and_found = 798002088286093342
 mcb_workshops = 798002477634027561
@@ -64,5 +64,5 @@ mcb_vr = 798003669026603028
 
 all_channels_testnet = [testnet_general, testnet_lounge]
 all_channels_mc = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge] + mc_study
-
+all_channels_mcb = [mcb_general, mcb_venus, mcb_mars, mcb_wisp, mcb_media, mcb_solar, mcb_ironmartian, mcb_telepresence, mcb_random, mcb_mail, mcb_resources, mcb_bikes, mcb_gardening, mcb_spanish, mcb_german, mcb_french, mcb_recycling, mcb_covid, mcb_tools, mcb_flowarts, mcb_drones, mcb_euc, mcb_chatsubo, mcb_salton_sea_salt_company, mcb_bbac, mcb_movienight, mcb_laundry, mcb_shopping, mcb_bitcoin, mcb_friendly_room, mcb_road_to_mars, mcb_lost_and_found, mcb_workshops, mcb_dnb, mcb_shipping_containers, mcb_local_specific, mcb_vr]
 

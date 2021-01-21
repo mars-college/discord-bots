@@ -30,7 +30,7 @@ mechanicalduck = {
             },
             'erase_mentions': True,
             'force_mention': None,
-            'engine': 'davinci',
+            'engine': 'curie',
             'temperature': 0.8, 
             'max_tokens': 50,
         }, 
@@ -63,14 +63,14 @@ mechanicalduck = {
     },    
     'behaviors': {
         'background': {
-            'probability_trigger': 0.5,
+            'probability_trigger': 0.0,
             'every_num_minutes': 60 * 8,
             'program': 'ml4a',
             'channel': mc_ai
         },
         'on_message': {                
-            'response_probability': 0.025,
-            'channels': all_channels_testnet + all_channels_mc,
+            'response_probability': 0.0,
+            'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'delay': [0, 1],
             'options': [
                 {'document': 'Make a visual artwork, painting, or graphics.', 'program': 'ml4a'},
@@ -80,7 +80,7 @@ mechanicalduck = {
         },
         'on_mention': {
             'response_probability': 1.0,
-            'channels': all_channels_testnet + all_channels_mc,
+            'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'delay': [0, 1],
             'program': 'gpt3_chat',                
             'options': [
