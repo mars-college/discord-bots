@@ -1,5 +1,6 @@
 from easydict import EasyDict
 import asyncio
+import re
 import gpt3
 
 
@@ -18,6 +19,9 @@ async def run(settings,
         engine=settings.engine if 'engine' in settings else 'davinci',
         max_completions=3)
     
+    if 'remove_empty_lines' in settings:
+        response = re.sub(r'[\n]+', '\\n', response)
+
     if 'preface' in settings:
         response = settings.preface + response
         
