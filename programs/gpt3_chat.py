@@ -15,18 +15,23 @@ def get_utc_time():
 
 
 async def run(settings, 
-              message, 
+              message,
+              channel, 
               member2var, 
               var2member,
               program_idx=0):
     
     settings = [settings] if not isinstance(settings, list) else settings
     settings = settings[program_idx]
-    
+
+    # select channel
+    if channel is None:
+        channel = message.channel
+
     # get channel's message history and limit it according to chat_history settings
     max_history = settings.chat_history.max_history
-    max_age = settings.chat_history.max_age    
-    message_history = await message.channel.history(limit=max_history).flatten()
+    max_age = settings.chat_history.max_age
+    message_history = await channel.history(limit=max_history).flatten()
     if max_age is not None:
         message_history = [msg for msg in message_history 
                            if (get_utc_time()-msg.created_at).seconds < max_age]

@@ -140,6 +140,21 @@ A sample configuration:
 ```
 
 
+### calendar_notify
+
+Bot that posts alerts/notifications for upcoming events on a shared Google folder. This should be paired with the `calendar` behavior, as specified in the "Behaviors" section below.
+
+Parameters to set:
+
+* `include_description`: Whether or not to include event description (aside from just the event title) in the Discord message.
+
+A sample configuration:
+```
+'calendar_notify': {
+  'include_description': True
+}
+```
+
 ## Writing a program
 
 You can write your own program!
@@ -161,6 +176,7 @@ Currently, there are several behavior types.
 * `on_mention`: the same as `on_message` except the message happens to mention the bot. This is to make behaviors different depending on whether the bot is mentioned or not.
 * `timed`: a program is triggered at a specific time or according to a set schedule. It can be according too the clock time, or relative to local sunrise/sunset time.
 * `background`: programs are triggered randomly with a fixed probability (so for example, bots can chime in randomly occasionally or post something on a channel that's been silent for a while).
+* `calendar`: programs are triggered according to Google Calendar events, for example to create notifications/alerts of upcoming events.
 
 Sample configurations and parameter explanations of these four behavior types follow.
 
@@ -229,3 +245,27 @@ Consider the folloowing configuration:
 ```
 
 This means: Run the program "gpt3_prompt" on channel 12345678 every day 60 minutes before the sunset ("sunrise" is also supported).
+
+
+### calendar
+
+This triggers according to Google Calendar events, upcoming events on a shared Google folder, for example to be used for event notifications/alerts. 
+
+First you need to get `credentials.json` [from Google Calendar API](https://developers.google.com/calendar/auth), and save it to the root as `.calendar_credentials.json`.
+
+Parameters to set:
+
+* `channel`: Which channel to post message to.
+* `program`: Name of the program (by default should be paired with `calendar_notify`, as seen in the programs section, but you coud write multiple)
+* `minutes_before`: How many minutes before event start time to trigger.
+* `check_every`: How often to check if events are upcoming (make sure this is suficiently less than `minutes_before`).
+
+A sample configuration:
+```
+'calendar': {
+  'program': 'calendar_notify',
+  'channel': testnet_general,
+  'minutes_before': 15,
+  'check_every': 5
+}
+```

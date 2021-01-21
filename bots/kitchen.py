@@ -45,6 +45,14 @@ kitchen = {
             'channels': all_channels_testnet + [mc_ai, mc_lounge, mc_food] + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.125
+        },
+        'background': {
+            'min_minutes_idle': 1,
+            'probability_trigger': 0.25,
+            'every_num_minutes': 10,
+            'probability_skip_halflife': 5,
+            'program': 'gpt3_chat',
+            'channel': testnet_general
         }
     }
 }

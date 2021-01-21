@@ -7,3 +7,4 @@ suntime
 spotipy
 transformers==3.4.0
 ml4a
+git+https://github.com/kuzmoyev/google-calendar-simple-api.git@dev

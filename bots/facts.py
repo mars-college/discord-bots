@@ -46,6 +46,14 @@ facts = {
             'channels': None,
             'program': 'gpt3_chat',
             'reaction_probability': 0.035
+        },
+        'background': {
+            'min_minutes_idle': 1,
+            'probability_trigger': 0.25,
+            'every_num_minutes': 10,
+            'probability_skip_halflife': 5,
+            'program': 'gpt3_chat',
+            'channel': testnet_general
         }
     }
 }

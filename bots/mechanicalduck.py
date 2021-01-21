@@ -93,7 +93,14 @@ mechanicalduck = {
             'response_probability': 1.0,
             'program': 'gpt3_chat', 'program_index': 1,
             'members': [404322488215142410]
+        },
+        'background': {
+            'min_minutes_idle': 1,
+            'probability_trigger': 0.25,
+            'every_num_minutes': 10,
+            'probability_skip_halflife': 5,
+            'program': 'gpt3_chat',
+            'channel': testnet_general
         }
-
     }
 }

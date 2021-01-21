@@ -30,7 +30,7 @@ deeplearning = {
             'force_mention': None,
             'engine': 'davinci',
             'temperature': 0.66, 
-            'max_tokens': 125,
+            'max_tokens': 125
         }
     },    
     'behaviors': {
@@ -39,6 +39,14 @@ deeplearning = {
             'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.25
+        },
+        'background': {
+            'min_minutes_idle': 1,
+            'probability_trigger': 0.25,
+            'every_num_minutes': 10,
+            'probability_skip_halflife': 5,
+            'program': 'gpt3_chat',
+            'channel': testnet_general
         }
     }
 }
