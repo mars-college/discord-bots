@@ -104,8 +104,8 @@ class DiscordBot(discord.Client):
         self.member2var = member2var
         self.var2member = var2member
 
-                
-    async def run_program(self, program, data, channel, program_idx=0):
+
+    async def run_program(self, program, data, channel, program_idx=0, reply_probability=0):
         response, embed, file = '', None, None
 
         ##########################################
@@ -172,11 +172,30 @@ class DiscordBot(discord.Client):
                 response = '<@!{}>'.format(message.author.id)
 
 
+        ##########################################
+        ## custom program to be written
+        ## in superclass by end-user
+        ##########################################
+
+        else:
+            message = None
+            settings = self.settings.programs[program]
+            response = await self.run_program_custom(program, settings)
+            
+
         # truncate to Discord max character limit
         response = response[:2000]
         
         # send to discord
-        await channel.send(response, embed=embed, file=file)
+        if random.random() < reply_probability and message is not None:
+            await message.reply(response, embed=embed, file=file)
+        else:
+            await channel.send(response, embed=embed, file=file)
+
+
+    async def run_program_custom(self, program, settings):
+        await asyncio.sleep(0)
+        return 'None'
 
 
     async def add_reaction(self, message):
@@ -247,7 +266,6 @@ class DiscordBot(discord.Client):
         decide_to_reply = (random.random() < context.response_probability)
         if private:
             channel_eligible = (message.author.id in context.members) if context.members else True
-            print(message.author.id, context.members, message.author.id in context.members)
         else:
             channel_eligible = (message.channel.id in context.channels) if context.channels else True
 
@@ -283,16 +301,18 @@ class DiscordBot(discord.Client):
                 return
             
         # choose program index if there are multiple and set args
-        program_idx = context.program_index if 'program_index' in context else 0
         data = message
         channel = message.channel
+        program_idx = context.program_index if 'program_index' in context else 0
+        reply_probability = context.reply_probability if 'reply_probability' in context else 0
         
         # delay, run program, remove active timestamp
         await asyncio.sleep(timestamp['delay'])
         await self.run_program(program, 
                                data,
                                channel,
-                               program_idx=program_idx)
+                               program_idx=program_idx,
+                               reply_probability=reply_probability)
         self.timestamps.remove(timestamp)
 
 
@@ -346,6 +366,7 @@ class DiscordBot(discord.Client):
 
         while True:
             upcoming_events = calendar.get_upcoming_events()  
+
             if not upcoming_events:
                 await asyncio.sleep(check_every)  # try again later
                 continue   
@@ -384,7 +405,6 @@ class DiscordBot(discord.Client):
             
             # if none found, initialize lookups for that channel
             else:
-                print('# lets calculate it')
                 messages = await channel.history(limit=1).flatten()
                 last_message = [msg for msg in messages][0]
                 last_message_time = last_message.created_at
