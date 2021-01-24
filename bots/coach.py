@@ -44,7 +44,7 @@ coach = {
             'members': [404322488215142410, 606313423126528010]
         },
         'calendar': {
-            'channel': testnet_general,
+            'channel': mcb_general,
             'program': 'calendar_notify',
             'minutes_before': 15,
             'check_every': 5
@@ -52,10 +52,10 @@ coach = {
         'background': {
             'min_minutes_idle': 1,
             'probability_trigger': 0.25,
-            'every_num_minutes': 10,
-            'probability_skip_halflife': 5,
+            'every_num_minutes': 45,
+            'probability_skip_halflife': 20,
             'program': 'gpt3_chat',
-            'channel': testnet_general
+            'channel': mcb_botlounge
         }
     }
 }

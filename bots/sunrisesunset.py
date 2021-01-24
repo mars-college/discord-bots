@@ -4,9 +4,6 @@ sunrisesunset = {
     'token_env': 'DISCORD_TOKEN_SUNRISESUNSET',
     'debug': False,
     'programs': {
-
-
-
         'gpt3_chat': {
             'name': 'The Poet',
             'chat_history': {
@@ -34,8 +31,7 @@ The gentleness of heaven broods o’er the Sea ...'''}
             'formatting': {
                 'line_breaks_before_sender': 3, 
                 'line_breaks_after_sender': 2, 
-                'stop_at_line_break': False,
-                'maximum_lines': 4
+                'stop_at_line_break': False
             },
             'erase_mentions': True,
             'force_mention': None,
@@ -43,11 +39,6 @@ The gentleness of heaven broods o’er the Sea ...'''}
             'temperature': 0.93, 
             'max_tokens': 150,
         },
-
-
-
-
-        
         'gpt3_prompt': [{
             'prompt': '''---
 Here is a short poem about the beginning of a new day.
@@ -144,10 +135,11 @@ Here is a short poem about the sunset.''',
             'channels': None
         },
         'on_mention': {
-            'response_probability': 1.0,
+            'response_probability': 0.0,
             'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'program': 'gpt3_chat',
-            'reaction_probability': 0.15
+            'reaction_probability': 0.15,
+            'reply_probability': 1.0
         },            
         'timed': [{
             'type': 'sunrise', 
@@ -159,14 +151,6 @@ Here is a short poem about the sunset.''',
             'minutes_before': 60,
             'program': 'gpt3_prompt', 'program_index': 1,
             'channel': mcb_general
-        }],
-        'background': {
-            'min_minutes_idle': 1,
-            'probability_trigger': 0.25,
-            'every_num_minutes': 10,
-            'probability_skip_halflife': 5,
-            'program': 'gpt3_chat',
-            'channel': testnet_general
-        }
+        }]
     }
 }

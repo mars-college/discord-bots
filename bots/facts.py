@@ -39,7 +39,8 @@ facts = {
             'response_probability': 1.0,
             'channels': all_channels_testnet + all_channels_mc + all_channels_mcb,
             'program': 'gpt3_chat',
-            'reaction_probability': 0.15
+            'reaction_probability': 0.15,
+            'reply_probability': 1.0
         },
         'on_message': {
             'response_probability': 0.0,
@@ -50,10 +51,10 @@ facts = {
         'background': {
             'min_minutes_idle': 1,
             'probability_trigger': 0.25,
-            'every_num_minutes': 10,
-            'probability_skip_halflife': 5,
+            'every_num_minutes': 45,
+            'probability_skip_halflife': 20,
             'program': 'gpt3_chat',
-            'channel': testnet_general
+            'channel': mcb_botlounge
         }
     }
 }
