@@ -31,7 +31,8 @@ class DiscordBotCustom(DiscordBot):
         print('Running custom program: {}'.format(program))
         name, data = settings.name, settings.data
         response = 'My name is {}: "{}"'.format(name, data)
-        return response
+        embed, file = None, None
+        return response, embed, file
 
 
 # overwrite global variables if you want

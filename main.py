@@ -180,7 +180,7 @@ class DiscordBot(discord.Client):
         else:
             message = None
             settings = self.settings.programs[program]
-            response = await self.run_program_custom(program, settings)
+            response, embed, file = await self.run_program_custom(program, settings)
             
 
         # truncate to Discord max character limit
@@ -195,7 +195,7 @@ class DiscordBot(discord.Client):
 
     async def run_program_custom(self, program, settings):
         await asyncio.sleep(0)
-        return 'None'
+        return 'None', None, None
 
 
     async def add_reaction(self, message):
