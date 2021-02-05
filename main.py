@@ -180,10 +180,12 @@ class DiscordBot(discord.Client):
         else:
             message = None
             settings = self.settings.programs[program]
-            response, embed, file = await self.run_program_custom(program, settings)
+            response, embed, file = await self.run_program_custom(program, data, settings)
             
 
         # truncate to Discord max character limit
+        if response is None:
+            return
         response = response[:2000]
         
         # send to discord
@@ -193,7 +195,7 @@ class DiscordBot(discord.Client):
             await channel.send(response, embed=embed, file=file)
 
 
-    async def run_program_custom(self, program, settings):
+    async def run_program_custom(self, program, data, settings):
         await asyncio.sleep(0)
         return 'None', None, None
 
