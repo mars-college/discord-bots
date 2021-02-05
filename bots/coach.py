@@ -52,8 +52,8 @@ coach = {
         'background': {
             'min_minutes_idle': 1,
             'probability_trigger': 0.25,
-            'every_num_minutes': 45,
-            'probability_skip_halflife': 20,
+            'every_num_minutes': 100,
+            'probability_skip_halflife': 50,
             'program': 'gpt3_chat',
             'channel': mcb_botlounge
         }
