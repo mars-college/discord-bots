@@ -36,104 +36,9 @@ botlist = [
     'kitchen', 'qa', 'coach'
 ]
 
-botlist=['coach']
-
-
-
 # Reactions/emoji preferences
 emoji_search_results = {}
 reactions_enabled = False
-
-
-import requests
-from io import BytesIO
-from PIL import Image
-import scipy
-
-def url_to_image(url):
-    finished = False
-    max_tries, n_tries = 5, 0
-    img = None
-    while not finished:
-        try:
-            response = requests.get(url)
-            img = Image.open(BytesIO(response.content))
-            finished = True
-        except:
-            time.sleep(5)
-            n_tries += 1
-            finished = n_tries >= 10
-    return img
-
-
-
-def strip_exif(img):
-    """Strip EXIF data from the photo to avoid a 500 error."""
-    data = list(img.getdata())
-    image_without_exif = Image.new(img.mode, img.size)
-    image_without_exif.putdata(data)
-    return image_without_exif
-
-def correct_ratio(photo):
-    from instabot.api.api_photo import compatible_aspect_ratio, get_image_size
-
-    return compatible_aspect_ratio(get_image_size(photo))
-
-
-
-def _entropy(data):
-    """Calculate the entropy of an image"""
-    hist = np.array(Image.fromarray(data).histogram())
-    hist = hist / hist.sum()
-    hist = hist[hist != 0]
-    return -np.sum(hist * np.log2(hist))
-
-
-def crop(x, y, data, w, h):
-    x = int(x)
-    y = int(y)
-    return data[y : y + h, x : x + w]
-
-
-def crop_maximize_entropy(img, min_ratio=4 / 5, max_ratio=90 / 47):
-    from scipy.optimize import minimize_scalar
-
-    w, h = img.size
-    data = np.array(img)
-    ratio = w / h
-    if ratio > max_ratio:  # Too wide
-        w_max = int(max_ratio * h)
-
-        def _crop(x):
-            return crop(x, y=0, data=data, w=w_max, h=h)
-
-        xy_max = w - w_max
-    else:  # Too narrow
-        h_max = int(w / min_ratio)
-
-        def _crop(y):
-            return crop(x=0, y=y, data=data, w=w, h=h_max)
-
-        xy_max = h - h_max
-
-    to_minimize = lambda xy: -_entropy(_crop(xy))  # noqa: E731
-    x = minimize_scalar(to_minimize, bounds=(0, xy_max), method="bounded").x
-    return Image.fromarray(_crop(x))
-
-
-
-
-def prepare_and_fix_photo(path):
-    with open(path, "rb") as f:
-        img = Image.open(f)
-        img = strip_exif(img)
-        print('size is', img.size)
-        if not correct_ratio(path):
-            img = crop_maximize_entropy(img)        
-        img.save(path)
-        img2 = Image.open(path)
-        print('size is', img2.size)
-    return path
 
 
 
@@ -518,11 +423,11 @@ class DiscordBot(discord.Client):
                 await self.update_lookups(last_message)
                 last_message_time = self.last_timestamps[channel]
 
+            # #stub for detecting question
             # is_question = last_message.strip().endswith('?')
             # question_to_me = is_question and second_last_sender.id == self.user.id
             # if question_to_me:
             #       probability_trigger = 1.0
-
             # skip below clause if question_to_me
 
             # if not enough time has elapsed since last message, skip
