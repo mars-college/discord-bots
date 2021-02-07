@@ -265,7 +265,12 @@ class DiscordBot(discord.Client):
         # if no behavior for this trigger, stop
         if context is None:
             return
-            
+        
+        # does it require a message trigger?
+        if 'message_trigger' in context:
+            if message.content.strip().lower() != context.message_trigger:
+                return
+
         # maybe add a reaction to the message
         if reactions_enabled \
         and not author_is_self \

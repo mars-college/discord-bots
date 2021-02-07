@@ -109,10 +109,10 @@ def run(message):
     if not compatible_aspect_ratio((w, h)):
         img = crop_maximize_entropy(img)
 
-    img.save('mytestimage.jpg')
-    result = bot.upload_photo("mytestimage.jpg", caption="quack quack")
+    img.save('instagram_img.jpg', quality=95)
+    result = bot.upload_photo('instagram_img.jpg', caption="quack quack")
     
     if isinstance(result, dict) and 'code' in result:
-        return 'Success! https://www.instagram.com/p/{}'.format(result['code'])
+        return 'Posted! https://www.instagram.com/p/{}'.format(result['code'])
     else:
         return 'Ooops, something went wrong in the upload :('
