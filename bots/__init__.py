@@ -12,6 +12,8 @@ from .deeplearning import deeplearning
 from .kitchen import kitchen
 from .qa import qa
 from .coach import coach
+from .oracle import oracle
+from .quest import quest
 
 
 bots = {
@@ -26,5 +28,7 @@ bots = {
     "deeplearning": deeplearning,
     "kitchen": kitchen,
     "qa": qa,
-    "coach": coach
+    "coach": coach,
+    "oracle": oracle,
+    "quest": quest
 }

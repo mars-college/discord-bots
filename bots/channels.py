@@ -60,6 +60,8 @@ mcb_dnb = 798002737445994538
 mcb_shipping_containers = 798003067807203359
 mcb_local_specific = 798003311092695071
 mcb_vr = 798003669026603028
+mcb_fortunetelling = 801868746292854825
+mcb_quest = 821858700963741747
 
 # sub-groups
 mc_main = [mc_general, mc_intros, mc_warmup, mc_ev, mc_shelter, mc_lounge]
@@ -68,5 +70,4 @@ mc_study = [mc_ai, mc_eeg, mc_biopunk, mc_flowarts, mc_music, mc_food, mc_worksh
 # groups
 all_channels_testnet = [testnet_general, testnet_lounge]
 all_channels_mc = mc_main + mc_study
-all_channels_mcb = [mcb_general, mcb_botlounge, mcb_venus, mcb_mars, mcb_chiba, mcb_ml, mcb_wisp, mcb_media, mcb_solar, mcb_ironmartian, mcb_telepresence, mcb_random, mcb_mail, mcb_resources, mcb_bikes, mcb_gardening, mcb_spanish, mcb_german, mcb_french, mcb_recycling, mcb_covid, mcb_tools, mcb_flowarts, mcb_drones, mcb_euc, mcb_chatsubo, mcb_salton_sea_salt_company, mcb_bbac, mcb_movienight, mcb_laundry, mcb_shopping, mcb_bitcoin, mcb_friendly_room, mcb_road_to_mars, mcb_lost_and_found, mcb_workshops, mcb_dnb, mcb_shipping_containers, mcb_local_specific, mcb_vr]
-
+all_channels_mcb = [mcb_general, mcb_botlounge, mcb_venus, mcb_mars, mcb_chiba, mcb_ml, mcb_wisp, mcb_media, mcb_solar, mcb_ironmartian, mcb_telepresence, mcb_random, mcb_mail, mcb_resources, mcb_bikes, mcb_gardening, mcb_spanish, mcb_german, mcb_french, mcb_recycling, mcb_covid, mcb_tools, mcb_flowarts, mcb_drones, mcb_euc, mcb_chatsubo, mcb_salton_sea_salt_company, mcb_bbac, mcb_movienight, mcb_laundry, mcb_shopping, mcb_bitcoin, mcb_friendly_room, mcb_road_to_mars, mcb_lost_and_found, mcb_workshops, mcb_dnb, mcb_shipping_containers, mcb_local_specific, mcb_vr, mcb_fortunetelling, mcb_quest]

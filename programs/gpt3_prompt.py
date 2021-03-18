@@ -5,11 +5,7 @@ import gpt3
 
 
 async def run(settings, 
-              message,
-              program_idx):
-
-    settings = [settings] if not isinstance(settings, list) else settings
-    settings = settings[program_idx]
+              message):
     
     response = gpt3.complete(
         settings.prompt, 

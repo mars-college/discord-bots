@@ -33,7 +33,7 @@ botlist = [
     'sunrisesunset', 'mesa', #'mechanicalduck', 
     'chatsubo', 'wall-e', 'eve', 
     'facts', 'philosophy', 'deeplearning', 
-    'kitchen', 'qa', 'coach'
+    'kitchen', 'qa', 'coach', 'oracle', 'quest'
 ]
 
 # Reactions/emoji preferences
@@ -76,8 +76,9 @@ class DiscordBot(discord.Client):
             self.loop.create_task(self.run_calendar_events())
 
 
-    async def update_lookups(self, message):
-        channel = message.channel
+    async def update_lookups(self, channel):
+        message_history = await channel.history(limit=1).flatten()
+        message = message_history[-1]
         self.last_timestamps[channel] = message.created_at
         last_senders = self.last_senders[channel.id] if channel.id in self.last_senders else None
         if last_senders is None:
@@ -109,6 +110,12 @@ class DiscordBot(discord.Client):
     async def run_program(self, program, data, channel, program_idx=0, reply_probability=0):
         response, embed, file = '', None, None
 
+        # get settings
+        settings = self.settings.programs[program]
+        settings = [settings] if not isinstance(settings, list) else settings
+        settings = settings[program_idx]
+
+
         ##########################################
         ## GPT-3 chat
         ##########################################
@@ -116,12 +123,11 @@ class DiscordBot(discord.Client):
         if program == 'gpt3_chat':
             message = data
             response = await gpt3_chat.run(
-                self.settings.programs.gpt3_chat, 
+                settings, 
                 message, 
                 channel, 
                 self.member2var, 
-                self.var2member,
-                program_idx)
+                self.var2member)
             
             
         ##########################################
@@ -131,9 +137,8 @@ class DiscordBot(discord.Client):
         elif program == 'gpt3_prompt':
             message = data
             response = await gpt3_prompt.run(
-                self.settings.programs.gpt3_prompt,
-                message,
-                program_idx)
+                settings,
+                message)
 
         
         ##########################################
@@ -142,7 +147,7 @@ class DiscordBot(discord.Client):
 
         elif program == 'calendar_notify':
             response = calendar.run(
-                self.settings.programs.calendar_notify, 
+                settings, 
                 data)
 
  
@@ -176,7 +181,7 @@ class DiscordBot(discord.Client):
             message = data
             if message is not None:
                 await channel.send('<@!{}> Drawing something, give me a few minutes...'.format(message.author.id))
-            local_filename = ml4a_client.run(self.settings.programs.ml4a)
+            local_filename = ml4a_client.run(settings)
             file = discord.File(local_filename, filename=local_filename)
             if message is not None:
                 response = '<@!{}>'.format(message.author.id)
@@ -189,9 +194,19 @@ class DiscordBot(discord.Client):
 
         else:
             message = None
-            settings = self.settings.programs[program]
             response, embed, file = await self.run_program_custom(program, data, settings)
             
+            
+        # if set to mention some users randomly
+        if 'mention_random_users' in settings:
+            await self.update_lookups(channel)
+            num_mentions = random.randint(*settings.mention_random_users)
+            members = list(set(self.member2var.keys()))
+            random.shuffle(members)
+            num_mentions = min(num_mentions, len(members))
+            members = members[0:num_mentions]
+            mentions = ' '.join(['<@!{}>'.format(m) for m in members])
+            response = '{} {}'.format(mentions, response)
 
         # truncate to Discord max character limit
         if response is None:
@@ -257,7 +272,7 @@ class DiscordBot(discord.Client):
             
         # lookup & replace tables from member id's to variables e.g. <P1>, <S>
         if not private:
-            await self.update_lookups(message)
+            await self.update_lookups(message.channel)
         else:
             self.member2var = {str(message.author.id): '<P1>', str(self.user.id): '<S>'}
             self.var2member = {'<P1>': '<@!{}>'.format(message.author.id), '<S>': '<@!{}>'.format(self.user.id)}
@@ -425,7 +440,7 @@ class DiscordBot(discord.Client):
                 messages = await channel.history(limit=1).flatten()
                 last_message = [msg for msg in messages][0]
                 last_message_time = last_message.created_at
-                await self.update_lookups(last_message)
+                await self.update_lookups(last_message.channel)
                 last_message_time = self.last_timestamps[channel]
 
             # #stub for detecting question

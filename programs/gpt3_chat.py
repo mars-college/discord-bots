@@ -18,11 +18,7 @@ async def run(settings,
               message,
               channel, 
               member2var, 
-              var2member,
-              program_idx=0):
-    
-    settings = [settings] if not isinstance(settings, list) else settings
-    settings = settings[program_idx]
+              var2member):
 
     # select channel
     if channel is None:
