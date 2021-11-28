@@ -13,12 +13,14 @@ async def run(settings,
         max_tokens=settings.max_tokens if 'max_tokens' in settings else 50, 
         temperature=settings.temperature if 'temperature' in settings else 0.9, 
         engine=settings.engine if 'engine' in settings else 'davinci',
-        max_completions=3)
+        max_completions=3,
+        content_filter=settings.content_filter if 'content_filter' in settings else False
+    )
     
     if 'remove_empty_lines' in settings:
         response = re.sub(r'[\n]+', '\\n', response)
 
-    if 'preface' in settings:
+    if 'preface' in settings and settings.preface:
         response = settings.preface + response
         
     return response

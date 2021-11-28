@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from suntime import Sun, SunTimeException
 import sched
 import asyncio
+import logging
 import itertools
 import time
 import math
@@ -23,22 +24,37 @@ from programs import gpt3_prompt
 from programs import calendar
 from programs import spotify
 from programs import instagram
+from programs import ifttt
 #from programs import ml4a_client
 
 from bots import bots
 from emojis import emoji_docs
 
-# Which bots to run from the bots directory
-botlist = [
-    'sunrisesunset', 'mesa', #'mechanicalduck', 
-    'chatsubo', 'wall-e', 'eve', 
-    'facts', 'philosophy', 'deeplearning', 
-    'kitchen', 'qa', 'coach', 'oracle', 'quest'
-]
+# setup logging
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s %(levelname)-8s %(message)s', 
+    datefmt='%a, %d %b %Y %H:%M:%S', 
+    filename='log_bots.txt', 
+    filemode='w'
+)
 
 # Reactions/emoji preferences
 emoji_search_results = {}
 reactions_enabled = False
+
+
+# Which bots to run from the bots directory
+botlist_2021 = [
+    'sunrisesunset', 'mesa', 'mechanicalduck', 
+    'chatsubo', 'wall-e', 'eve', 
+    'facts', 'philosophy', 'deeplearning', 
+    'kitchen', 'qa', 'coach', 
+    'oracle', 'quest', 'astronauts', 'sentient_machine'
+]
+
+botlist_2022 = ['chiba']
+botlist = botlist_2022
 
 
 
@@ -109,11 +125,29 @@ class DiscordBot(discord.Client):
 
     async def run_program(self, program, data, channel, program_idx=0, reply_probability=0):
         response, embed, file = '', None, None
-
+        
         # get settings
         settings = self.settings.programs[program]
         settings = [settings] if not isinstance(settings, list) else settings
         settings = settings[program_idx]
+
+        if program == 'search':
+            message = data
+            candidates = [opt['document'] for opt in settings.options]
+            query = re.sub('<@!?[0-9]+>', '', message.content)
+            result = gpt3.search(candidates, query, engine='curie')
+            scores = [doc['score'] for doc in result['data']]
+            ranked_queries = list(reversed(np.argsort(scores)))
+            options_search = [{'candidate': candidates[idx], 'score': scores[idx]} 
+                              for idx in ranked_queries]
+            for result in options_search[:2]:
+                print(" -> %s : %0.2f" % (result['candidate'], result['score']))
+            idx_top = ranked_queries[0]
+            program = settings.options[idx_top]['program']
+            program_idx = 0 if 'program_idx' not in settings.options[idx_top] else settings.options[idx_top]['program_idx']
+            settings = self.settings.programs[program]
+            settings = [settings] if not isinstance(settings, list) else settings
+            settings = settings[program_idx]
 
 
         ##########################################
@@ -164,12 +198,30 @@ class DiscordBot(discord.Client):
 
 
         ##########################################
+        ## If this then that                    
+        ##########################################
+
+        elif program == 'ifttt':
+            message = data
+            response = ifttt.run(settings, message)
+
+
+        ##########################################
         ## Instagram                    
         ##########################################
 
         elif program == 'instagram':
             message = data
             response = instagram.run(message)
+            
+
+        ##########################################
+        ## Constant                    
+        ##########################################
+
+        elif program == 'constant':
+            message = data
+            response = 'gm'
             
 
         ##########################################
@@ -310,28 +362,12 @@ class DiscordBot(discord.Client):
         timestamp = {"time": time.time(), "delay": delay}
         self.timestamps.append(timestamp)
 
-        # choose program based on search query, if specified
-        options_search = None
-        if 'options' in context and len(context.options):
-            candidates = [opt['document'] for opt in context.options]
-            query = re.sub('<@!?[0-9]+>', '', message.content)
-            result = gpt3.search(candidates, query, engine='curie')
-            scores = [doc['score'] for doc in result['data']]
-            ranked_queries = list(reversed(np.argsort(scores)))
-            options_search = [{'candidate': candidates[idx], 'score': scores[idx]} 
-                              for idx in ranked_queries]
-            for result in options_search[:2]:
-                print(" -> %s : %0.2f" % (result['candidate'], result['score']))
-            idx_top = ranked_queries[0]
-            program = context.options[idx_top]['program']
-            print("selected program:", program)
-        
-        else:
-            program = context.program if 'program' in context else None
-            if not program:
-                print('No program selected')
-                return
-            
+        # select program
+        program = context.program if 'program' in context else None
+        if not program:
+            print('No program selected')
+            return
+
         # choose program index if there are multiple and set args
         data = message
         channel = message.channel
@@ -443,13 +479,6 @@ class DiscordBot(discord.Client):
                 await self.update_lookups(last_message.channel)
                 last_message_time = self.last_timestamps[channel]
 
-            # #stub for detecting question
-            # is_question = last_message.strip().endswith('?')
-            # question_to_me = is_question and second_last_sender.id == self.user.id
-            # if question_to_me:
-            #       probability_trigger = 1.0
-            # skip below clause if question_to_me
-
             # if not enough time has elapsed since last message, skip
             now = datetime.now()
             min_minutes_idle = background.min_minutes_idle
@@ -467,7 +496,8 @@ class DiscordBot(discord.Client):
             prob_trigger = 1.0 - math.pow(prob_skip, 1.0 / background.every_num_minutes)
 
             if (random.random() < prob_trigger):
-                await self.run_program(background.program, None, 
+                await self.run_program(background.program,
+                                       None, 
                                        channel, 
                                        program_idx=program_index)
 

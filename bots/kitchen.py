@@ -43,15 +43,15 @@ kitchen = {
         },
         'on_message': {
             'response_probability': 0.00025,
-            'channels': all_channels_testnet + [mc_ai, mc_lounge, mc_food] + all_channels_mcb,
+            'channels': [mcb_botlounge], #all_channels_testnet + [mc_ai, mc_lounge, mc_food] + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.125
         },
         'background': {
             'min_minutes_idle': 1,
-            'probability_trigger': 0.25,
-            'every_num_minutes': 100,
-            'probability_skip_halflife': 50,
+            'probability_trigger': 0.1,
+            'every_num_minutes': 900,
+            'probability_skip_halflife': 150,
             'program': 'gpt3_chat',
             'channel': mcb_botlounge
         }

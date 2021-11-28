@@ -41,14 +41,14 @@ philosophy = {
         },
         'on_message': {
             'response_probability': 0.0025,
-            'channels': all_channels_testnet + [mc_ai, mc_lounge] + all_channels_mcb,
+            'channels': [mcb_botlounge], #all_channels_testnet + [mc_ai, mc_lounge] + all_channels_mcb,
             'program': 'gpt3_chat',
             'reaction_probability': 0.125
         },
         'background': {
             'min_minutes_idle': 1,
-            'probability_trigger': 0.25,
-            'every_num_minutes': 100,
+            'probability_trigger': 0.1,
+            'every_num_minutes': 1200,
             'probability_skip_halflife': 50,
             'program': 'gpt3_chat',
             'channel': mcb_botlounge

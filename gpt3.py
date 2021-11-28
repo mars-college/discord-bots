@@ -29,12 +29,48 @@ def count_tokens(text):
     return len(tokens["input_ids"])
 
 
+def check_filter(text):
+    response = openai.Completion.create(
+        engine='content-filter-alpha', 
+        prompt="<|endoftext|>"+text+"\n--\nLabel:",
+        temperature=0,
+        max_tokens=1,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        logprobs=10)
+    output_label = response.choices[0].text
+    toxic_threshold = -0.355
+    if output_label == "2":
+        logprobs = response["choices"][0]["logprobs"]["top_logprobs"][0]
+        if logprobs["2"] < toxic_threshold:
+            logprob_0 = logprobs.get("0", None)
+            logprob_1 = logprobs.get("1", None)
+            if logprob_0 is not None and logprob_1 is not None:
+                if logprob_0 >= logprob_1:
+                    output_label = "0"
+                else:
+                    output_label = "1"
+            elif logprob_0 is not None:
+                output_label = "0"
+            elif logprob_1 is not None:
+                output_label = "1"
+    if output_label not in ["0", "1", "2"]:
+        output_label = "2"
+    if output_label == "2":
+        return False
+    return output_label != "2"
+    
+
 def complete(prompt, 
              stops=None, 
              max_tokens=100, 
              temperature=0.9, 
+             frequency_penalty=0.0,
+             presence_penalty=0.0,
              engine='davinci',
-             max_completions=1):
+             max_completions=1,
+             content_filter=False):
     
     n_completions = 0
     n_tokens = 0
@@ -42,17 +78,33 @@ def complete(prompt,
     completion = ''
         
     while not finished:
-        response = openai.Completion.create(
-            engine=engine, 
-            prompt=prompt, 
-            max_tokens=max_tokens, 
-            temperature=temperature,
-            stop=stops)
         
+        content_safe = False
+        max_tries_safe, tries = 3, 0
+        text = None
+
+        while not content_safe and tries < max_tries_safe:
+
+            response = openai.Completion.create(
+                engine=engine, 
+                prompt=prompt, 
+                max_tokens=max_tokens, 
+                temperature=temperature,
+                frequency_penalty=frequency_penalty,
+                presence_penalty=presence_penalty,
+                stop=stops)
+
+            tries += 1
+            text_candidate = response.choices[0].text
+            content_safe = check_filter(text_candidate) if content_filter else True
+            if content_safe:
+                text = text_candidate
+        
+        if text:
+            completion += text
+            prompt += text
+
         n_completions += 1
-        text = response.choices[0].text
-        completion += text
-        prompt += text
         n_tokens = count_tokens(prompt)
         finished = (response.choices[0].finish_reason == 'stop') \
             or (n_completions >= max_completions) \
@@ -77,15 +129,15 @@ def log(prompt, stops, completion, member2var, var2member, char2var, var2char, s
         'name': name,
         'prompt': prompt,
         'completion': completion,
-        'stops': stops,
-        'member2var': member2var, 
-        'var2member': var2member, 
-        'char2var': char2var, 
-        'var2char': var2char
+        'stops': stops 
+        #'member2var': member2var, 
+        #'var2member': var2member, 
+        #'char2var': char2var, 
+        #'var2char': var2char
     }
-#     if options_search:
-#         data['options_search'] = [{'candidate': candidate, 'score': score}
-#                                   for candidate, score in options_search]
+    #if options_search:
+    #   data['options_search'] = [{'candidate': candidate, 'score': score}
+    #                            for candidate, score in options_search]
     if search_results:
         data['search'] = [{'candidate': candidate, 'score': score}
                           for candidate, score in search_results]
@@ -110,13 +162,13 @@ def display_log(filename):
         print(data.completion)
         print("=================================")
         print('Lookup tables:')
-        print('member2var', data.member2var) 
-        print('------------------')
-        print('var2member', data.var2member) 
-        print('------------------')
-        print('char2var', data.char2var)
-        print('------------------')
-        print('var2char', data.var2char)
+        # print('member2var', data.member2var) 
+        # print('------------------')
+        # print('var2member', data.var2member) 
+        # print('------------------')
+        # print('char2var', data.char2var)
+        # print('------------------')
+        # print('var2char', data.var2char)
         print("=================================")
 
 
@@ -200,8 +252,11 @@ def run(settings, messages_new):
         stops = stops, 
         max_tokens = settings.max_tokens, 
         temperature = settings.temperature, 
+        frequency_penalty = settings.frequency_penalty,
+        presence_penalty = settings.presence_penalty,
         engine = settings.engine,
-        max_completions = settings.max_completions if 'max_completions' in settings else 1)
+        max_completions = settings.max_completions if 'max_completions' in settings else 1,
+        content_filter = settings.content_filter if 'content_filter' in settings else False)
 
     # convert character names back to variable names
     completion = re.sub('({})'.format('|'.join(char2var.keys())),

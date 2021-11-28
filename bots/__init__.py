@@ -14,7 +14,11 @@ from .qa import qa
 from .coach import coach
 from .oracle import oracle
 from .quest import quest
-
+from .astronauts import astronauts
+from .sentient_machine import sentient_machine
+from .abraham import abraham
+from .poetry import poetry
+from .chiba import chiba
 
 bots = {
     "sunrisesunset": sunrisesunset,
@@ -30,5 +34,10 @@ bots = {
     "qa": qa,
     "coach": coach,
     "oracle": oracle,
-    "quest": quest
+    "quest": quest,
+    "astronauts": astronauts,
+    "sentient_machine": sentient_machine,
+    "abraham": abraham,
+    "poetry": poetry,
+    "chiba": chiba
 }

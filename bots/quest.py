@@ -42,14 +42,13 @@ The gentleness of heaven broods o’er the Sea ...'''}
             'max_tokens': 150,
         },
         'gpt3_prompt': [{
-            'prompt': '''
-Organize a tea party with 7 different cups in the quad
+            'prompt': '''Organize a tea party with 7 different cups in the quad
 Start a tag game at Venus.
 Pretend to be lifeguards at the beach.
 Go to mars and ask for the pope. Give him the following message: there’s a disruption in the ranks, trust no one.
 Create a circle of bones outside of mars.
 Make 6 fancy cocktails with liquor, fruit, and coffee, and leave it out in cups at the speakeasy.
-<S1>, turn 3 people into zombies by biting them. Each zombie must turn 2 others into zombies within 30 minutes, or they’ll die.
+Turn 3 people into zombies by biting them. Each zombie must turn 2 others into zombies within 30 minutes, or they’ll die.
 Your directive is to help assemble the spaceship, put metal, round objects, large pieces of wood, outside of the quad for the spaceship.
 Make an elaborate cake and distribute it while dancing.
 Ask the next three people you see for words and turn them into a poem that you scream into the void at sunset.
@@ -58,7 +57,7 @@ Collect seven fist-size martian rocks for review, drop them off by the pole on t
 Create a crown and wear it the rest of the day.
 Make an elixir with rum, blueberries, gin, lemon, sparking water, herbs and give it to someone who’s been infected with the local martian parasites.
 You’ve been infected, make something that looks like it’s growing out of your arm and wear it until someone gives you an elixir.
-Find a long wire and make a path in the ground, get <S1> to dance along it.
+Find a long wire and make a path in the ground, get someone to dance along it.
 ''', 
             'engine': 'davinci',
             'temperature': 0.92,
