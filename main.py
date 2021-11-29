@@ -31,13 +31,13 @@ from bots import bots
 from emojis import emoji_docs
 
 # setup logging
-logging.basicConfig(
-    level=logging.INFO, 
-    format='%(asctime)s %(levelname)-8s %(message)s', 
-    datefmt='%a, %d %b %Y %H:%M:%S', 
-    filename='log_bots.txt', 
-    filemode='w'
-)
+# logging.basicConfig(
+#     level=logging.DEBUG, 
+#     format='%(asctime)s %(levelname)-8s %(message)s', 
+#     datefmt='%a, %d %b %Y %H:%M:%S', 
+#     filename='log_bots2.txt', 
+#     filemode='w'
+# )
 
 # Reactions/emoji preferences
 emoji_search_results = {}
@@ -53,7 +53,7 @@ botlist_2021 = [
     'oracle', 'quest', 'astronauts', 'sentient_machine'
 ]
 
-botlist_2022 = ['chiba']
+botlist_2022 = ['chiba', 'abraham']
 botlist = botlist_2022
 
 
@@ -131,10 +131,11 @@ class DiscordBot(discord.Client):
         settings = [settings] if not isinstance(settings, list) else settings
         settings = settings[program_idx]
 
+        # select program from gpt3 search
         if program == 'search':
             message = data
             candidates = [opt['document'] for opt in settings.options]
-            query = re.sub('<@!?[0-9]+>', '', message.content)
+            query = re.sub('<@!?[0-9]+>', '', message.content).strip()
             result = gpt3.search(candidates, query, engine='curie')
             scores = [doc['score'] for doc in result['data']]
             ranked_queries = list(reversed(np.argsort(scores)))
@@ -149,6 +150,19 @@ class DiscordBot(discord.Client):
             settings = [settings] if not isinstance(settings, list) else settings
             settings = settings[program_idx]
 
+        # select program by first keyword
+        elif program == 'keyword':
+            message = data
+            query = re.sub('<@!?[0-9]+>', '', message.content.lower()).strip().split(' ')
+            if not query:
+                return
+            for p in settings.programs:
+                if query[0] in p['keywords']:
+                    program = p['program']
+            if not program:
+                return
+            settings = self.settings.programs[program]
+            
 
         ##########################################
         ## GPT-3 chat
@@ -312,15 +326,21 @@ class DiscordBot(discord.Client):
         all_mentions = re.findall('<@!?([0-9]+)>', message.content)
         mentioned = str(self.user.id) in all_mentions
         author_is_self = message.author.id == self.user.id
-        
-        # which context (on_message, on_mention, or background)
+
+        # if it's a reply, check if reply is to self        
+        if message.reference:
+            prev_msg = await message.channel.fetch_message(message.reference.message_id)
+            reply_to_is_self = prev_msg.author.id == self.user.id
+            mentioned = mentioned or reply_to_is_self
+            
+        # which contexts (on_message, on_mention, or background)
         behavior = self.settings.behaviors
         if private:
-            context = behavior.direct_message if 'direct_message' in behavior else None
+            contexts = behavior.direct_message if 'direct_message' in behavior else None
         elif mentioned:
-            context = behavior.on_mention if 'on_mention' in behavior else None
+            contexts = behavior.on_mention if 'on_mention' in behavior else None
         else:
-            context = behavior.on_message if 'on_message' in behavior else None
+            contexts = behavior.on_message if 'on_message' in behavior else None
             
         # lookup & replace tables from member id's to variables e.g. <P1>, <S>
         if not private:
@@ -330,58 +350,69 @@ class DiscordBot(discord.Client):
             self.var2member = {'<P1>': '<@!{}>'.format(message.author.id), '<S>': '<@!{}>'.format(self.user.id)}
 
         # if no behavior for this trigger, stop
-        if context is None:
+        if contexts is None:
             return
         
-        # does it require a message trigger?
-        if 'message_trigger' in context:
-            if message.content.strip().lower() != context.message_trigger:
-                return
+        contexts = contexts if isinstance(contexts, list) else [contexts]
 
-        # maybe add a reaction to the message
-        if reactions_enabled \
-        and not author_is_self \
-        and 'reaction_probability' in context \
-        and (random.random() < context.reaction_probability):
-            await self.add_reaction(message)
-             
-        # skipping conditions
-        busy = len(self.timestamps) > 0
-        decide_to_reply = (random.random() < context.response_probability)
-        if private:
-            channel_eligible = (message.author.id in context.members) if context.members else True
-        else:
-            channel_eligible = (message.channel.id in context.channels) if context.channels else True
+        for context in contexts:
+            
+            # does it require a message trigger?
+            if 'message_trigger' in context:
+                if message.content.strip().lower() != context.message_trigger:
+                    continue
 
-        # if any skipping conditions are True, stop
-        if busy or author_is_self or not decide_to_reply or not channel_eligible:
-            return
-        
-        # bot has decided to reply; add timestamp and delay
-        delay = context.delay[0]+(context.delay[1]-context.delay[0])*random.random() if 'delay' in context else 0
-        timestamp = {"time": time.time(), "delay": delay}
-        self.timestamps.append(timestamp)
+            # maybe add a reaction to the message
+            if reactions_enabled \
+            and not author_is_self \
+            and 'reaction_probability' in context \
+            and (random.random() < context.reaction_probability):
+                await self.add_reaction(message)
 
-        # select program
-        program = context.program if 'program' in context else None
-        if not program:
-            print('No program selected')
-            return
+            # skipping conditions
+            busy = len(self.timestamps) > 0
+            decide_to_reply = (random.random() < context.response_probability)
+            if private:
+                channel_eligible = (message.author.id in context.members) if context.members else True
+            else:
+                channel_eligible = (message.channel.id in context.channels) if context.channels else True
 
-        # choose program index if there are multiple and set args
-        data = message
-        channel = message.channel
-        program_idx = context.program_index if 'program_index' in context else 0
-        reply_probability = context.reply_probability if 'reply_probability' in context else 0
-        
-        # delay, run program, remove active timestamp
-        await asyncio.sleep(timestamp['delay'])
-        await self.run_program(program, 
-                               data,
-                               channel,
-                               program_idx=program_idx,
-                               reply_probability=reply_probability)
-        self.timestamps.remove(timestamp)
+            # if any skipping conditions are True, stop
+            if busy \
+            or author_is_self \
+            or not decide_to_reply \
+            or not channel_eligible:
+                continue
+            
+            # bot has decided to reply; add timestamp and delay
+            delay = context.delay[0]+(context.delay[1]-context.delay[0])*random.random() if 'delay' in context else 0
+            timestamp = {"time": time.time(), "delay": delay}
+            self.timestamps.append(timestamp)
+
+            # select program
+            program = context.program if 'program' in context else None
+            if not program:
+                print('No program selected')
+                continue
+
+            # choose program index if there are multiple and set args
+            data = message
+            channel = message.channel
+            program_idx = context.program_index if 'program_index' in context else 0
+            reply_probability = context.reply_probability if 'reply_probability' in context else 0
+            
+            # delay, run program, remove active timestamp
+            await asyncio.sleep(
+                timestamp['delay']
+            )
+            await self.run_program(
+                program, 
+                data,
+                channel,
+                program_idx=program_idx,
+                reply_probability=reply_probability
+            )
+            self.timestamps.remove(timestamp)
 
 
     async def run_timed_events(self):

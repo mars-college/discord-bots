@@ -1,12 +1,12 @@
 import re
 import os
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 
 def run(message, self_id):
     
     command = re.sub('<@!?\d+>[ ]?', '', message.content).strip()
-
     search_regex = '^({})'.format('|'.join(['play', 'queue', 'next', 'stop', 'help']))
     keyword = re.findall(search_regex, command, flags=re.IGNORECASE)
     action = keyword[0].lower() if keyword else None
@@ -35,7 +35,9 @@ def run(message, self_id):
                 client_id=os.getenv('SPOTIFY_CLIENT_ID'),
                 client_secret=os.getenv('SPOTIFY_CLIENT_SECRET'),
                 redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI'),
-                scope="streaming"))
+                scope="streaming"
+            )
+        )
         
         if action == 'next':
             spotify.next_track(device_id=os.getenv('SPOTIFY_DEVICE_ID'))
@@ -88,3 +90,22 @@ def run(message, self_id):
 
     return message_out, embed_out
 
+
+
+
+# import spotipy
+# from spotipy.oauth2 import SpotifyOAuth
+# from pprint import pprint
+# from time import sleep
+
+# scope = "user-read-playback-state"
+# sp = spotipy.Spotify(
+#     client_credentials_manager=SpotifyOAuth(
+#         client_id=os.getenv('SPOTIFY_CLIENT_ID'),
+#         client_secret=os.getenv('SPOTIFY_CLIENT_SECRET'),
+#         redirect_uri='http://127.0.0.1:8080',
+#         scope=scope))
+
+# # Shows playing devices
+# res = sp.devices()
+# pprint(res)
