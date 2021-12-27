@@ -124,6 +124,18 @@ def search(documents, query, engine='davinci'):
     return result
 
 
+def classify(examples, query, labels, engine='davinci', search_engine='ada'):
+    data = json.dumps({"examples": examples, "query": query, "labels": labels,
+                       "search_model": search_engine, "model": engine})
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % os.getenv('OPENAI_API_KEY'),
+    }
+    response = requests.post('https://api.openai.com/v1/classifications', headers=headers, data=data)
+    result = json.loads(response.text)
+    return result
+
+
 def log(prompt, stops, completion, member2var, var2member, char2var, var2char, search_results, name):
     data = {
         'name': name,
